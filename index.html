@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Lino's Learning Games</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design Tokens ──────────────────────────────────────────── */
+    :root {
+      --clr-bg:         #f5f0e8;
+      --clr-surface:    #ffffff;
+      --clr-text:       #2c2c3a;
+      --clr-muted:      #7a7a8c;
+
+      /* Category accent colours */
+      --clr-math:       #ff6b6b;
+      --clr-math-soft:  #fff0f0;
+      --clr-sci:        #4ecdc4;
+      --clr-sci-soft:   #f0fdfb;
+      --clr-comp:       #6c63ff;
+      --clr-comp-soft:  #f3f2ff;
+      --clr-fun:        #ffd166;
+      --clr-fun-soft:   #fffbf0;
+
+      --clr-header-bg:  #2c2c3a;
+      --clr-header-txt: #f5f0e8;
+
+      --radius-card:    18px;
+      --radius-badge:   50px;
+      --shadow-card:    0 4px 20px rgba(44,44,58,0.10);
+      --shadow-hover:   0 8px 32px rgba(44,44,58,0.18);
+
+      --font-display: 'Fredoka', sans-serif;
+      --font-body:    'Nunito', sans-serif;
+
+      --transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--clr-bg);
+      color: var(--clr-text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Decorative background dots ────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(108,99,255,0.08) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,107,107,0.06) 1px, transparent 1px);
+      background-size: 40px 40px, 60px 60px;
+      background-position: 0 0, 20px 20px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Header ─────────────────────────────────────────────────── */
+    header {
+      background-color: var(--clr-header-bg);
+      color: var(--clr-header-txt);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 32px;
+      background-color: var(--clr-bg);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+
+    .header-emoji {
+      font-size: 3.5rem;
+      display: block;
+      margin-bottom: 0.5rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.1;
+    }
+
+    header h1 span {
+      color: var(--clr-fun);
+    }
+
+    header p.tagline {
+      margin-top: 0.75rem;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: rgba(245,240,232,0.75);
+      font-weight: 600;
+    }
+
+    /* ─── Main ───────────────────────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    /* ─── Category Section ───────────────────────────────────────── */
+    .category {
+      margin-bottom: 3.5rem;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .category:nth-child(1) { animation-delay: 0.05s; }
+    .category:nth-child(2) { animation-delay: 0.15s; }
+    .category:nth-child(3) { animation-delay: 0.25s; }
+    .category:nth-child(4) { animation-delay: 0.35s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.35rem 1.1rem;
+      border-radius: var(--radius-badge);
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--clr-surface);
+    }
+
+    .category-badge .icon { font-size: 1.3rem; }
+
+    .category[data-cat="math"]      .category-badge { background-color: var(--clr-math); }
+    .category[data-cat="science"]   .category-badge { background-color: var(--clr-sci); color: var(--clr-text); }
+    .category[data-cat="computing"] .category-badge { background-color: var(--clr-comp); }
+    .category[data-cat="fun"]       .category-badge { background-color: var(--clr-fun); color: var(--clr-text); }
+
+    .category-count {
+      font-size: 0.9rem;
+      color: var(--clr-muted);
+      font-weight: 600;
+    }
+
+    /* ─── Games Grid ─────────────────────────────────────────────── */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ─── Game Card ──────────────────────────────────────────────── */
+    .game-card {
+      background-color: var(--clr-surface);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .game-card:focus-visible {
+      outline: 3px solid var(--clr-comp);
+      outline-offset: 3px;
+    }
+
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+    }
+
+    .category[data-cat="math"]      .card-thumb { background-color: var(--clr-math-soft); }
+    .category[data-cat="science"]   .card-thumb { background-color: var(--clr-sci-soft); }
+    .category[data-cat="computing"] .card-thumb { background-color: var(--clr-comp-soft); }
+    .category[data-cat="fun"]       .card-thumb { background-color: var(--clr-fun-soft); }
+
+    .card-body {
+      padding: 1rem 1.1rem 1.2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--clr-text);
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--clr-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-play {
+      margin-top: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--clr-surface);
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-badge);
+      width: fit-content;
+      transition: filter 0.2s;
+    }
+
+    .game-card:hover .card-play { filter: brightness(1.1); }
+
+    .category[data-cat="math"]      .card-play { background-color: var(--clr-math); }
+    .category[data-cat="science"]   .card-play { background-color: var(--clr-sci); color: var(--clr-text); }
+    .category[data-cat="computing"] .card-play { background-color: var(--clr-comp); }
+    .category[data-cat="fun"]       .card-play { background-color: var(--clr-fun); color: var(--clr-text); }
+
+    /* ─── "Coming Soon" card variant ────────────────────────────── */
+    .game-card.coming-soon {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .coming-soon-label {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.7rem;
+      background: var(--clr-text);
+      color: var(--clr-bg);
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--font-display);
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-badge);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ─── Empty Category Placeholder ────────────────────────────── */
+    .empty-category {
+      background: var(--clr-surface);
+      border-radius: var(--radius-card);
+      padding: 1.75rem;
+      text-align: center;
+      color: var(--clr-muted);
+      font-size: 0.95rem;
+      border: 2px dashed rgba(44,44,58,0.12);
+    }
+
+    .empty-category p { margin-top: 0.35rem; }
+
+    /* ─── Footer ─────────────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      background-color: var(--clr-header-bg);
+      color: rgba(245,240,232,0.6);
+      text-align: center;
+      padding: 1.75rem 1rem;
+      font-size: 0.88rem;
+    }
+
+    footer a {
+      color: var(--clr-fun);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .games-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ───────────────────────────────────────────────── -->
+  <header>
+    <span class="header-emoji" role="img" aria-label="rocket">🚀</span>
+    <h1>Dr. Lino's <span>Learning Games</span></h1>
+    <p class="tagline">Play. Explore. Discover.</p>
+  </header>
+
+  <!-- ── Main content ─────────────────────────────────────────── -->
+  <main>
+
+    <!-- MATH ──────────────────────────────────────────────────── -->
+    <section class="category" data-cat="math" aria-labelledby="cat-math">
+      <div class="category-header">
+        <span class="category-badge">
+          <span class="icon" aria-hidden="true">➕</span>
+          <span id="cat-math">Math</span>
+        </span>
+        <span class="category-count" id="math-count"></span>
+      </div>
+      <div class="games-grid" id="grid-math">
+        <!-- Game cards injected by JS, or add manually below -->
+        <!-- Example (remove when real games are added):
+        <a class="game-card" href="games/math/addition-adventure/">
+          <div class="card-thumb">🔢</div>
+          <div class="card-body">
+            <span class="card-title">Addition Adventure</span>
+            <span class="card-desc">Race against the clock to solve addition problems!</span>
+            <span class="card-play">▶ Play</span>
+          </div>
+        </a>
+        -->
+      </div>
+    </section>
+
+    <!-- SCIENCE ────────────────────────────────────────────────── -->
+    <section class="category" data-cat="science" aria-labelledby="cat-science">
+      <div class="category-header">
+        <span class="category-badge">
+          <span class="icon" aria-hidden="true">🔬</span>
+          <span id="cat-science">Science</span>
+        </span>
+        <span class="category-count" id="science-count"></span>
+      </div>
+      <div class="games-grid" id="grid-science"></div>
+    </section>
+
+    <!-- COMPUTING ──────────────────────────────────────────────── -->
+    <section class="category" data-cat="computing" aria-labelledby="cat-computing">
+      <div class="category-header">
+        <span class="category-badge">
+          <span class="icon" aria-hidden="true">💻</span>
+          <span id="cat-computing">Computing</span>
+        </span>
+        <span class="category-count" id="computing-count"></span>
+      </div>
+      <div class="games-grid" id="grid-computing"></div>
+    </section>
+
+    <!-- FUN ────────────────────────────────────────────────────── -->
+    <section class="category" data-cat="fun" aria-labelledby="cat-fun">
+      <div class="category-header">
+        <span class="category-badge">
+          <span class="icon" aria-hidden="true">🎉</span>
+          <span id="cat-fun">Fun</span>
+        </span>
+        <span class="category-count" id="fun-count"></span>
+      </div>
+      <div class="games-grid" id="grid-fun"></div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer>
+    <p>Made with ❤️ by <a href="https://linocoria.com" target="_blank" rel="noopener">Dr. Lino Coria</a> &nbsp;·&nbsp; Northeastern University</p>
+    <p style="margin-top:0.4rem;">Making learning fun, one game at a time.</p>
+  </footer>
+
+  <!-- ── Game Registry ────────────────────────────────────────── -->
+  <!--
+    HOW TO ADD A GAME
+    =================
+    Add an object to the `games` array below.
+
+    Fields:
+      title    (string)   — Display name shown on the card
+      desc     (string)   — One-sentence description for the card
+      category (string)   — One of: "math" | "science" | "computing" | "fun"
+      path     (string)   — Relative URL, e.g. "games/math/addition-adventure/"
+      emoji    (string)   — Emoji used as the card thumbnail
+      soon     (boolean)  — Optional. Set to true to show "Coming Soon" badge
+
+    Example:
+    { title: "Addition Adventure", desc: "Race to solve addition problems!",
+      category: "math", path: "games/math/addition-adventure/", emoji: "🔢" }
+  -->
+  <script>
+    const games = [
+      // ── Add your games here ──────────────────────────────────────
+      // { title: "Addition Adventure", desc: "Race against the clock to solve addition problems!", category: "math", path: "games/math/addition-adventure/", emoji: "🔢" },
+      // { title: "Solar System Quiz",  desc: "How well do you know the planets?", category: "science", path: "games/science/solar-system-quiz/", emoji: "🪐" },
+      // { title: "Sorting Explorer",   desc: "Watch sorting algorithms come to life!", category: "computing", path: "games/computing/sorting-explorer/", emoji: "📊" },
+      // { title: "Word Scramble",       desc: "Unscramble the letters before time runs out.", category: "fun", path: "games/fun/word-scramble/", emoji: "🔤" },
+    ];
+
+    // ── Render ────────────────────────────────────────────────────
+    const categories = ["math", "science", "computing", "fun"];
+
+    categories.forEach(cat => {
+      const grid  = document.getElementById(`grid-${cat}`);
+      const count = document.getElementById(`${cat}-count`);
+      const list  = games.filter(g => g.category === cat);
+
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-category">
+            <strong>🚧 Games coming soon!</strong>
+            <p>Check back shortly — we're adding new games regularly.</p>
+          </div>`;
+        return;
+      }
+
+      count.textContent = `${list.length} game${list.length > 1 ? 's' : ''}`;
+
+      list.forEach(game => {
+        const card = document.createElement('a');
+        card.className = 'game-card' + (game.soon ? ' coming-soon' : '');
+        card.href      = game.soon ? '#' : game.path;
+        if (!game.soon) card.setAttribute('aria-label', `Play ${game.title}`);
+
+        card.innerHTML = `
+          ${game.soon ? '<span class="coming-soon-label" aria-label="Coming soon">Coming Soon</span>' : ''}
+          <div class="card-thumb" role="img" aria-hidden="true">${game.emoji}</div>
+          <div class="card-body">
+            <span class="card-title">${game.title}</span>
+            <span class="card-desc">${game.desc}</span>
+            ${!game.soon ? '<span class="card-play">▶ Play</span>' : ''}
+          </div>`;
+
+        grid.appendChild(card);
+      });
+
+      count.textContent = `${list.length} game${list.length > 1 ? 's' : ''}`;
+    });
+  </script>
+
+</body>
+</html>
