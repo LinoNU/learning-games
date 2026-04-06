@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tidy Up! – Dr. Lino's Learning Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design Tokens ──────────────────────────────────────────── */
+    :root {
+      --clr-bg:         #f5f0e8;
+      --clr-surface:    #ffffff;
+      --clr-text:       #2c2c3a;
+      --clr-muted:      #7a7a8c;
+      --clr-math:       #ff6b6b;
+      --clr-math-soft:  #fff0f0;
+      --clr-header-bg:  #2c2c3a;
+      --clr-header-txt: #f5f0e8;
+      --clr-fun:        #ffd166;
+      --radius-card:    18px;
+      --radius-badge:   50px;
+      --shadow-card:    0 4px 20px rgba(44,44,58,0.10);
+      --font-display:   'Fredoka', sans-serif;
+      --font-body:      'Nunito', sans-serif;
+
+      /* Game-specific palette */
+      --clr-pink:       #ff6b9d;
+      --clr-pink-dark:  #c73b6b;
+      --clr-pink-soft:  #ffe0ef;
+      --clr-purple:     #9370db;
+      --clr-purple-dark:#4b0082;
+      --clr-green:      #56c573;
+      --clr-green-dark: #33895a;
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(160deg, #87ceeb 0%, #e0f6ff 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--clr-text);
+      overflow-x: hidden;
+    }
+
+    /* ─── Site Header ────────────────────────────────────────────── */
+    .site-header {
+      background-color: var(--clr-header-bg);
+      color: var(--clr-header-txt);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .back-link {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--clr-fun);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 0.8; text-decoration: underline; }
+
+    .site-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--clr-header-txt);
+      flex: 1;
+      text-align: center;
+    }
+
+    /* ─── Game Wrapper ───────────────────────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .game-container {
+      position: relative;
+      width: 606px;
+      max-width: 95vw;
+    }
+
+    /* ─── Game Header Bar ────────────────────────────────────────── */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: linear-gradient(to right, var(--clr-pink-soft), #e8d4f0);
+      border-radius: 15px 15px 0 0;
+      border: 3px solid var(--clr-pink);
+      border-bottom: none;
+      width: 100%;
+    }
+
+    .score-display, .lives-display {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      min-width: 100px;
+    }
+    .score-display { text-align: left; }
+    .lives-display { color: var(--clr-pink-dark); text-align: right; }
+
+    .parent-mood-header {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      background: rgba(255,255,255,0.8);
+      padding: 5px 15px;
+      border-radius: 20px;
+    }
+
+    /* ─── Canvas ─────────────────────────────────────────────────── */
+    #gameCanvas {
+      display: block;
+      background: linear-gradient(to bottom, #fff8dc, #ffefd5);
+      border-left: 3px solid var(--clr-pink);
+      border-right: 3px solid var(--clr-pink);
+      border-top: none;
+      border-bottom: none;
+    }
+
+    /* ─── Input Area ─────────────────────────────────────────────── */
+    .input-area {
+      background: linear-gradient(to right, #c8f7d0, #b0edb9);
+      padding: 15px 20px;
+      border-radius: 0 0 15px 15px;
+      border: 3px solid var(--clr-pink);
+      border-top: none;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .current-problem {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      min-width: 120px;
+    }
+
+    #answerInput {
+      flex: 1;
+      padding: 10px 18px;
+      font-size: 22px;
+      font-family: var(--font-display);
+      background: white;
+      border: 3px solid var(--clr-pink);
+      border-radius: 12px;
+      color: var(--clr-purple-dark);
+      outline: none;
+      text-align: center;
+    }
+    #answerInput:focus {
+      border-color: var(--clr-pink-dark);
+      box-shadow: 0 0 12px rgba(255,107,157,0.4);
+    }
+    #answerInput::placeholder { color: rgba(147,112,219,0.45); }
+
+    .tidy-btn {
+      padding: 10px 22px;
+      font-size: 17px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      background: linear-gradient(to bottom, var(--clr-pink), var(--clr-pink-dark));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 0 #a02d54;
+    }
+    .tidy-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #a02d54; }
+    .tidy-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #a02d54; }
+
+    /* ─── Overlays ───────────────────────────────────────────────── */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 220, 235, 0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      border-radius: 15px;
+      padding: 24px;
+      text-align: center;
+      overflow-y: auto;
+    }
+    .overlay.hidden { display: none; }
+
+    .game-title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      margin-bottom: 6px;
+    }
+
+    .game-subtitle {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--clr-pink-dark);
+      margin-bottom: 22px;
+    }
+
+    .menu-btn {
+      padding: 13px 36px;
+      font-size: 20px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      background: linear-gradient(to bottom, var(--clr-purple), var(--clr-purple-dark));
+      border: none;
+      border-radius: 15px;
+      color: white;
+      cursor: pointer;
+      margin: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 5px 0 #350060;
+    }
+    .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 0 #350060; }
+
+    .menu-btn.restart {
+      background: linear-gradient(to bottom, #ffa500, #e07800);
+      box-shadow: 0 5px 0 #a85800;
+    }
+    .menu-btn.restart:hover { box-shadow: 0 8px 0 #a85800; }
+
+    .instructions {
+      font-family: var(--font-body);
+      font-size: 13.5px;
+      color: var(--clr-purple-dark);
+      margin-top: 18px;
+      line-height: 1.8;
+    }
+    .instructions strong { color: var(--clr-pink-dark); }
+
+    .final-score {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      margin: 16px 0;
+    }
+
+    .gen-alpha-message {
+      font-family: var(--font-body);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--clr-pink-dark);
+      margin: 12px 0;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.55);
+      border-radius: 12px;
+      max-width: 90%;
+    }
+
+    /* ─── Difficulty Selector ────────────────────────────────────── */
+    .difficulty-selector { margin: 16px 0; }
+    .difficulty-selector label {
+      display: block;
+      font-family: var(--font-body);
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .difficulty-buttons { display: flex; gap: 10px; justify-content: center; }
+    .diff-btn {
+      padding: 8px 18px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 15px;
+      background: white;
+      border: 3px solid var(--clr-pink);
+      border-radius: 10px;
+      color: var(--clr-purple-dark);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .diff-btn:hover, .diff-btn.selected {
+      background: var(--clr-pink);
+      color: white;
+    }
+
+    /* ─── Combo ──────────────────────────────────────────────────── */
+    .combo-display {
+      position: absolute;
+      top: 58px;
+      right: 18px;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--clr-pink-dark);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 5;
+    }
+    .combo-display.visible { opacity: 1; }
+
+    /* ─── Leaderboard ────────────────────────────────────────────── */
+    .leaderboard {
+      background: rgba(255,255,255,0.35);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      min-width: 270px;
+      max-width: 90%;
+    }
+    .leaderboard-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      margin-bottom: 8px;
+    }
+    .leaderboard-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 10px;
+      margin: 4px 0;
+      background: rgba(255,255,255,0.55);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: var(--font-body);
+      font-weight: 600;
+    }
+    .leaderboard-entry.gold   { background: linear-gradient(to right,#ffd700,#ffa500); color: #5a3000; }
+    .leaderboard-entry.silver { background: linear-gradient(to right,#c0c0c0,#a8a8a8); color: #3a3a3a; }
+    .leaderboard-entry.bronze { background: linear-gradient(to right,#cd7f32,#b87333); color: #3a1a00; }
+    .leaderboard-rank  { font-weight: 700; margin-right: 8px; }
+    .leaderboard-name  { flex: 1; }
+    .leaderboard-empty { font-family: var(--font-body); color: var(--clr-purple-dark); font-style: italic; padding: 8px; }
+
+    /* ─── Name Entry ─────────────────────────────────────────────── */
+    .name-entry {
+      background: rgba(255,215,0,0.25);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin: 10px 0;
+    }
+    .name-entry.hidden { display: none; }
+    .name-entry-label {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--clr-purple-dark);
+      margin-bottom: 8px;
+      display: block;
+    }
+    #playerNameInput {
+      padding: 8px 14px;
+      font-size: 17px;
+      font-family: var(--font-display);
+      border: 3px solid var(--clr-pink);
+      border-radius: 10px;
+      width: 150px;
+      text-align: center;
+      margin-right: 8px;
+    }
+    #playerNameInput:focus { outline: none; border-color: var(--clr-pink-dark); }
+    .save-btn {
+      padding: 9px 18px;
+      font-size: 15px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      background: linear-gradient(to bottom, var(--clr-green), var(--clr-green-dark));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .save-btn:hover { transform: scale(1.05); }
+
+    /* ─── Floating Feedback ──────────────────────────────────────── */
+    .feedback {
+      position: absolute;
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 700;
+      pointer-events: none;
+      animation: feedbackPop 1s ease-out forwards;
+      z-index: 50;
+    }
+    .feedback.correct { color: #32cd32; text-shadow: 2px 2px 0 #228b22; }
+    .feedback.wrong   { color: #ff5533; text-shadow: 2px 2px 0 #c01010; }
+
+    @keyframes feedbackPop {
+      0%   { opacity: 1; transform: scale(0.5) translateY(0); }
+      50%  { opacity: 1; transform: scale(1.3) translateY(-20px); }
+      100% { opacity: 0; transform: scale(1)   translateY(-50px); }
+    }
+
+    /* ─── Screen Shake ───────────────────────────────────────────── */
+    @keyframes shake {
+      0%,100%           { transform: translateX(0); }
+      10%,30%,50%,70%,90% { transform: translateX(-5px); }
+      20%,40%,60%,80%   { transform: translateX(5px); }
+    }
+    .shake { animation: shake 0.5s ease-in-out; }
+
+    /* ─── Six-Seven Easter Egg ───────────────────────────────────── */
+    .six-seven-popup {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-display);
+      font-size: 44px;
+      font-weight: 700;
+      color: var(--clr-pink-dark);
+      text-shadow: 3px 3px 0 #ffd700, -2px -2px 0 var(--clr-purple-dark);
+      z-index: 200;
+      animation: sixSevenPop 1.5s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes sixSevenPop {
+      0%  { opacity: 0; transform: translate(-50%,-50%) scale(0.5) rotate(-10deg); }
+      20% { opacity: 1; transform: translate(-50%,-50%) scale(1.3) rotate(5deg); }
+      60% { opacity: 1; transform: translate(-50%,-50%) scale(1)   rotate(0deg); }
+      100%{ opacity: 0; transform: translate(-50%,-70%) scale(0.8); }
+    }
+
+    /* ─── Site Footer ────────────────────────────────────────────── */
+    footer {
+      background-color: var(--clr-header-bg);
+      color: rgba(245,240,232,0.6);
+      text-align: center;
+      padding: 1.25rem 1rem;
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+    }
+    footer a {
+      color: var(--clr-fun);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 620px) {
+      .game-container { width: 100%; }
+      .current-problem { font-size: 20px; min-width: 90px; }
+      #answerInput { font-size: 18px; }
+      .tidy-btn { font-size: 14px; padding: 10px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Site Header ───────────────────────────────────────────── -->
+  <header class="site-header">
+    <a class="back-link" href="../../index.html">← All Games</a>
+    <h1>🧦 Tidy Up! — Math Room Challenge</h1>
+    <span style="min-width:100px;"></span><!-- spacer to keep h1 centred -->
+  </header>
+
+  <!-- ── Game ──────────────────────────────────────────────────── -->
+  <main>
+    <div class="game-container" id="gameContainer">
+
+      <!-- Game Header Bar -->
+      <div class="game-header">
+        <div class="score-display">Score: <span id="score">0</span></div>
+        <div class="parent-mood-header" id="parentMood">Mom's Mood: 😊 Chill</div>
+        <div class="lives-display">Chances: <span id="lives">⭐⭐⭐</span></div>
+      </div>
+
+      <!-- Canvas -->
+      <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+      <!-- Combo -->
+      <div class="combo-display" id="comboDisplay">🔥 On a roll! x<span id="comboCount">0</span></div>
+
+      <!-- Input Area -->
+      <div class="input-area">
+        <div class="current-problem" id="currentProblem">--</div>
+        <input type="number" id="answerInput" placeholder="?" autocomplete="off" aria-label="Your answer" />
+        <button class="tidy-btn" id="fireBtn">TIDY UP! 🧹</button>
+      </div>
+
+      <!-- ── Start Overlay ──────────────────────────────────── -->
+      <div class="overlay" id="startOverlay" role="dialog" aria-modal="true" aria-label="Start screen">
+        <div class="game-title">🧦 TIDY UP! 🧹</div>
+        <div class="game-subtitle">Clean your room before mom gets mad!</div>
+
+        <div class="difficulty-selector">
+          <label>Choose Difficulty:</label>
+          <div class="difficulty-buttons">
+            <button class="diff-btn selected" data-diff="easy">Chill</button>
+            <button class="diff-btn" data-diff="medium">Mid</button>
+            <button class="diff-btn" data-diff="hard">Sigma</button>
+          </div>
+        </div>
+
+        <button class="menu-btn" id="startBtn">LET'S GOO! 🚀</button>
+
+        <div class="instructions">
+          <strong>How to Play:</strong><br>
+          🧦 Clothes are falling everywhere! So not skibidi!<br>
+          ⌨️ Solve the maths problem to put them away<br>
+          ➕➖✖️➗ Addition, subtraction, multiplication &amp; division<br>
+          ✅ Right answer = item goes in the basket<br>
+          ❌ Wrong answer = mom gets more sus<br>
+          🔥 Keep your streak going for max aura!
+        </div>
+      </div>
+
+      <!-- ── Game Over Overlay ───────────────────────────────── -->
+      <div class="overlay hidden" id="gameOverOverlay" role="dialog" aria-modal="true" aria-label="Game over screen">
+        <div class="game-title">OH NO! 😱</div>
+        <div class="gen-alpha-message" id="loseMessage"></div>
+        <div class="final-score">Score: <span id="finalScore">0</span></div>
+
+        <div class="name-entry hidden" id="nameEntry">
+          <span class="name-entry-label">🏆 NEW HIGH SCORE! Enter your name:</span>
+          <input type="text" id="playerNameInput" maxlength="12" placeholder="Your name" aria-label="Enter your name" />
+          <button class="save-btn" id="saveScoreBtn">SAVE +AURA 📈</button>
+        </div>
+
+        <div class="leaderboard">
+          <div class="leaderboard-title">🏆 AURA LEADERBOARD 🏆</div>
+          <div class="leaderboard-entries" id="leaderboardEntries"></div>
+        </div>
+
+        <div class="difficulty-selector">
+          <label>Switch Difficulty:</label>
+          <div class="difficulty-buttons">
+            <button class="diff-btn" data-diff="easy">Chill</button>
+            <button class="diff-btn" data-diff="medium">Mid</button>
+            <button class="diff-btn" data-diff="hard">Sigma</button>
+          </div>
+        </div>
+
+        <button class="menu-btn restart" id="restartBtn">TRY AGAIN 💪</button>
+      </div>
+
+      <!-- ── Level Complete Overlay ─────────────────────────── -->
+      <div class="overlay hidden" id="levelOverlay" role="dialog" aria-modal="true" aria-label="Level complete screen">
+        <div class="game-title">✨ LEVEL CLEARED! ✨</div>
+        <div class="gen-alpha-message" id="winMessage"></div>
+        <div class="final-score">Level <span id="completedLevel">1</span> done!</div>
+        <button class="menu-btn" id="nextLevelBtn">NEXT LEVEL 🔥</button>
+      </div>
+
+    </div><!-- /.game-container -->
+  </main>
+
+  <!-- ── Site Footer ───────────────────────────────────────────── -->
+  <footer>
+    <p>Dr. Lino's Learning Games &nbsp;·&nbsp; <a href="https://linocoria.com" target="_blank" rel="noopener">linocoria.com</a></p>
+  </footer>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    //  GEN ALPHA MESSAGES
+    // ═══════════════════════════════════════════════════════════════
+    const WIN_MESSAGES = [
+      "No cap, you absolutely ATE that level! 💅✨",
+      "That was lowkey FIRE! You got that dawg in you! 🐕‍🦺",
+      "BRO your math aura is UNMATCHED rn! 👑",
+      "Slay bestie! Mom is giving proud vibes! 💖",
+      "You're literally the main character of cleaning! ✨",
+      "That was so skibidi of you! Ohio would be proud! 🗿",
+      "W rizz on those math problems fr fr! 🔥",
+      "You understood the assignment! No cap! 📝",
+      "Living rent free in that leaderboard! 🏆",
+      "That's giving... SIGMA ENERGY! 💪",
+      "You just mewed your way through that level! 🗿✨",
+      "Absolute GOAT behavior! Keep fanum taxing those points! 🐐"
+    ];
+
+    const LOSE_MESSAGES = [
+      "Oof, that's not very skibidi of you... Mom is NOT impressed! 😤",
+      "Bro fell off 💀 Your room looks like Ohio rn!",
+      "That's cap... You need to lock in and try again! 🔒",
+      "No aura detected 📉 Mom said touch grass AND clean your room!",
+      "You're cooked fr fr 🍳 Time for a redemption arc!",
+      "Major L energy... But we believe in your comeback! 💪",
+      "Bruh moment 🗿 Mom's about to take away the iPad!",
+      "Not the vibe check fail... 😭 You can do better bestie!",
+      "Your rizz ran out! Mom is giving disappointed parent energy! 😔",
+      "That was lowkey mid... Time to grind and get better! 📈"
+    ];
+
+    const STREAK_MESSAGES = [
+      "", "", "",
+      "Nice streak! 🔥", "You're cooking! 🍳",
+      "Absolute cinema! 🎬", "Main character energy! ✨",
+      "GOATED! 🐐", "Actual legend! 👑",
+      "Built different! 💪", "SIGMA GRINDSET! 🗿"
+    ];
+
+    // ═══════════════════════════════════════════════════════════════
+    //  CLOTHING ITEMS
+    // ═══════════════════════════════════════════════════════════════
+    const CLOTHING_ITEMS = [
+      { emoji: '🧦', name: 'sock' },
+      { emoji: '👕', name: 'shirt' },
+      { emoji: '👖', name: 'pants' },
+      { emoji: '👟', name: 'shoe' },
+      { emoji: '🧢', name: 'cap' },
+      { emoji: '🧤', name: 'glove' },
+      { emoji: '👗', name: 'dress' },
+      { emoji: '🩳', name: 'shorts' },
+      { emoji: '🧣', name: 'scarf' },
+      { emoji: '👚', name: 'blouse' }
+    ];
+
+    // ═══════════════════════════════════════════════════════════════
+    //  GAME CONFIGURATION
+    // ═══════════════════════════════════════════════════════════════
+    const CONFIG = {
+      easy: {
+        baseSpeed: 0.25, spawnInterval: 4500,
+        operations: ['+', '-', '×'],
+        tables: [2, 5, 10], addSubMax: 20
+      },
+      medium: {
+        baseSpeed: 0.35, spawnInterval: 3800,
+        operations: ['+', '-', '×', '÷'],
+        tables: [2, 3, 4, 5, 6, 10], addSubMax: 50
+      },
+      hard: {
+        baseSpeed: 0.45, spawnInterval: 3200,
+        operations: ['+', '-', '×', '÷'],
+        tables: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], addSubMax: 100
+      }
+    };
+
+    // ═══════════════════════════════════════════════════════════════
+    //  GAME STATE
+    // ═══════════════════════════════════════════════════════════════
+    let canvas, ctx;
+    let gameState = {
+      isRunning: false,
+      score: 0, level: 1, lives: 3, combo: 0,
+      items: [], tidyAnimations: [], particles: [],
+      difficulty: 'easy',
+      leaderboard: JSON.parse(localStorage.getItem('tidyUpLeaderboard')) || [],
+      itemsTidiedThisLevel: 0, itemsPerLevel: 8
+    };
+    const basket = { x: 300, y: 370, width: 80, height: 50 };
+    let spawnTimer = null, gameLoop = null;
+
+    // ═══════════════════════════════════════════════════════════════
+    //  INIT
+    // ═══════════════════════════════════════════════════════════════
+    function init() {
+      canvas = document.getElementById('gameCanvas');
+      ctx    = canvas.getContext('2d');
+      setupEventListeners();
+      updateDisplay();
+      drawRoom();
+    }
+
+    function setupEventListeners() {
+      document.getElementById('startBtn').addEventListener('click', startGame);
+      document.getElementById('restartBtn').addEventListener('click', restartGame);
+      document.getElementById('nextLevelBtn').addEventListener('click', nextLevel);
+      document.getElementById('fireBtn').addEventListener('click', handleTidy);
+      document.getElementById('answerInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') handleTidy();
+      });
+      document.getElementById('saveScoreBtn').addEventListener('click', saveScore);
+      document.getElementById('playerNameInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') saveScore();
+      });
+
+      document.querySelectorAll('#startOverlay .diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#startOverlay .diff-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          gameState.difficulty = btn.dataset.diff;
+        });
+      });
+      document.querySelectorAll('#gameOverOverlay .diff-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#gameOverOverlay .diff-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          gameState.difficulty = btn.dataset.diff;
+        });
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  GAME CONTROL
+    // ═══════════════════════════════════════════════════════════════
+    function startGame() {
+      document.getElementById('startOverlay').classList.add('hidden');
+      Object.assign(gameState, {
+        isRunning: true, score: 0, level: 1, lives: 3, combo: 0,
+        items: [], tidyAnimations: [], particles: [], itemsTidiedThisLevel: 0
+      });
+      updateDisplay();
+      spawnItem();
+      startSpawnTimer();
+      gameLoop = requestAnimationFrame(update);
+      document.getElementById('answerInput').focus();
+    }
+
+    function restartGame() {
+      document.getElementById('gameOverOverlay').classList.add('hidden');
+      startGame();
+    }
+
+    function nextLevel() {
+      document.getElementById('levelOverlay').classList.add('hidden');
+      gameState.level++;
+      gameState.itemsTidiedThisLevel = 0;
+      gameState.items = [];
+      gameState.isRunning = true;
+      updateDisplay();
+      spawnItem();
+      startSpawnTimer();
+      gameLoop = requestAnimationFrame(update);
+      document.getElementById('answerInput').focus();
+    }
+
+    function gameOver() {
+      gameState.isRunning = false;
+      clearInterval(spawnTimer);
+      cancelAnimationFrame(gameLoop);
+
+      document.getElementById('finalScore').textContent = gameState.score;
+      document.getElementById('loseMessage').textContent =
+        LOSE_MESSAGES[Math.floor(Math.random() * LOSE_MESSAGES.length)];
+
+      const isHighScore = gameState.leaderboard.length < 3 ||
+        gameState.score > (gameState.leaderboard.at(-1)?.score ?? 0);
+      const nameEntry = document.getElementById('nameEntry');
+      if (isHighScore && gameState.score > 0) {
+        nameEntry.classList.remove('hidden');
+        document.getElementById('playerNameInput').value = '';
+        document.getElementById('playerNameInput').focus();
+      } else {
+        nameEntry.classList.add('hidden');
+      }
+
+      document.querySelectorAll('#gameOverOverlay .diff-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.diff === gameState.difficulty);
+      });
+      displayLeaderboard();
+      document.getElementById('gameOverOverlay').classList.remove('hidden');
+    }
+
+    function saveScore() {
+      let name = document.getElementById('playerNameInput').value.trim() || 'Anonymous';
+      gameState.leaderboard.push({ name, score: gameState.score, difficulty: gameState.difficulty });
+      gameState.leaderboard.sort((a, b) => b.score - a.score);
+      gameState.leaderboard = gameState.leaderboard.slice(0, 3);
+      localStorage.setItem('tidyUpLeaderboard', JSON.stringify(gameState.leaderboard));
+      document.getElementById('nameEntry').classList.add('hidden');
+      displayLeaderboard();
+      playSound('correct');
+    }
+
+    function displayLeaderboard() {
+      const container = document.getElementById('leaderboardEntries');
+      if (gameState.leaderboard.length === 0) {
+        container.innerHTML = '<div class="leaderboard-empty">No scores yet! Be the first to get that aura! ✨</div>';
+        return;
+      }
+      const rankEmojis  = ['👑', '🥈', '🥉'];
+      const rankClasses = ['gold', 'silver', 'bronze'];
+      const diffLabels  = { easy: '😌', medium: '😎', hard: '🗿' };
+      container.innerHTML = gameState.leaderboard.map((e, i) => `
+        <div class="leaderboard-entry ${rankClasses[i] || ''}">
+          <span class="leaderboard-rank">${rankEmojis[i] || (i + 1)}</span>
+          <span class="leaderboard-name">${escapeHtml(e.name)}</span>
+          <span>${diffLabels[e.difficulty] || ''}</span>
+          <span class="leaderboard-score">+${e.score} aura</span>
+        </div>`).join('');
+    }
+
+    function escapeHtml(text) {
+      const d = document.createElement('div');
+      d.textContent = text;
+      return d.innerHTML;
+    }
+
+    function levelComplete() {
+      gameState.isRunning = false;
+      clearInterval(spawnTimer);
+      cancelAnimationFrame(gameLoop);
+      document.getElementById('completedLevel').textContent = gameState.level;
+      document.getElementById('winMessage').textContent =
+        WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)];
+      document.getElementById('levelOverlay').classList.remove('hidden');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  SPAWNING
+    // ═══════════════════════════════════════════════════════════════
+    function startSpawnTimer() {
+      const interval = Math.max(2500, CONFIG[gameState.difficulty].spawnInterval - (gameState.level - 1) * 150);
+      clearInterval(spawnTimer);
+      spawnTimer = setInterval(() => {
+        if (gameState.isRunning && gameState.items.length < 4) spawnItem();
+      }, interval);
+    }
+
+    function generateProblem() {
+      const cfg = CONFIG[gameState.difficulty];
+      const op  = cfg.operations[Math.floor(Math.random() * cfg.operations.length)];
+      const tbl = cfg.tables[Math.floor(Math.random() * cfg.tables.length)];
+      let num1, num2, answer, problemText;
+
+      if (op === '+') {
+        num1 = Math.floor(Math.random() * cfg.addSubMax) + 1;
+        num2 = Math.floor(Math.random() * (cfg.addSubMax - num1)) + 1;
+        answer = num1 + num2;
+        problemText = `${num1} + ${num2}`;
+      } else if (op === '-') {
+        num1 = Math.floor(Math.random() * cfg.addSubMax) + 10;
+        num2 = Math.floor(Math.random() * Math.min(num1 - 1, cfg.addSubMax / 2)) + 1;
+        answer = num1 - num2;
+        problemText = `${num1} - ${num2}`;
+      } else if (op === '×') {
+        num1 = tbl;
+        num2 = Math.floor(Math.random() * 10) + 1;
+        answer = num1 * num2;
+        problemText = `${num1} × ${num2}`;
+      } else {
+        num2 = tbl;
+        const mul = Math.floor(Math.random() * 10) + 1;
+        num1 = num2 * mul;
+        answer = mul;
+        problemText = `${num1} ÷ ${num2}`;
+      }
+      return { problemText, answer };
+    }
+
+    function spawnItem() {
+      const { problemText, answer } = generateProblem();
+      const cfg      = CONFIG[gameState.difficulty];
+      const clothing = CLOTHING_ITEMS[Math.floor(Math.random() * CLOTHING_ITEMS.length)];
+
+      let x, attempts = 0;
+      do {
+        x = 80 + Math.random() * (canvas.width - 160);
+        attempts++;
+      } while (attempts < 10 && gameState.items.some(i => Math.abs(i.x - x) < 100));
+
+      gameState.items.push({
+        x, y: -50, width: 90, height: 60,
+        speed: cfg.baseSpeed + (gameState.level - 1) * 0.04,
+        problem: problemText, answer, clothing,
+        rotation: 0,
+        rotationSpeed: (Math.random() - 0.5) * 0.05,
+        wobble: Math.random() * Math.PI * 2
+      });
+      updateCurrentProblem();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  INPUT HANDLING
+    // ═══════════════════════════════════════════════════════════════
+    function handleTidy() {
+      if (!gameState.isRunning) return;
+      const input  = document.getElementById('answerInput');
+      const answer = parseInt(input.value, 10);
+      input.value  = '';
+      input.focus();
+      if (isNaN(answer)) return;
+
+      if (answer === 67) showSixSeven();
+
+      const target = gameState.items.reduce((lowest, item) =>
+        (!lowest || item.y > lowest.y) ? item : lowest, null);
+      if (!target) return;
+
+      if (answer === target.answer) {
+        tidyItem(target);
+        gameState.combo++;
+        const comboBonus = Math.floor(gameState.combo / 3) * 10;
+        const points = 10 + comboBonus + gameState.level * 5;
+        gameState.score += points;
+        const streakMsg = gameState.combo < STREAK_MESSAGES.length
+          ? STREAK_MESSAGES[gameState.combo] : 'LEGENDARY! 🏆';
+        showFeedback('✓ +' + points + (streakMsg ? ' ' + streakMsg : ''), target.x, target.y, true);
+        playSound('correct');
+      } else {
+        gameState.combo = 0;
+        showFeedback(`✗ It was ${target.answer}!`, target.x, target.y, false);
+        playSound('wrong');
+        target.speed *= 1.2;
+      }
+      updateDisplay();
+      updateCurrentProblem();
+    }
+
+    function tidyItem(item) {
+      gameState.tidyAnimations.push({
+        x: item.x, y: item.y,
+        targetX: basket.x, targetY: basket.y - 20,
+        clothing: item.clothing, progress: 0,
+        startX: item.x, startY: item.y
+      });
+      for (let i = 0; i < 10; i++) {
+        gameState.particles.push({
+          x: item.x, y: item.y,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          life: 1,
+          color: ['#ffd700','#ff6b9d','#00ced1','#98fb98'][Math.floor(Math.random() * 4)],
+          size: Math.random() * 8 + 4, type: 'sparkle'
+        });
+      }
+      const idx = gameState.items.indexOf(item);
+      if (idx > -1) gameState.items.splice(idx, 1);
+
+      gameState.itemsTidiedThisLevel++;
+      if (gameState.itemsTidiedThisLevel >= gameState.itemsPerLevel + gameState.level * 2) {
+        setTimeout(levelComplete, 500);
+      }
+    }
+
+    function dropItem(item) {
+      for (let i = 0; i < 8; i++) {
+        gameState.particles.push({
+          x: item.x, y: canvas.height - 40,
+          vx: (Math.random() - 0.5) * 4, vy: -Math.random() * 5,
+          life: 1, emoji: item.clothing.emoji, size: 20, type: 'dropped'
+        });
+      }
+      const idx = gameState.items.indexOf(item);
+      if (idx > -1) gameState.items.splice(idx, 1);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  RENDER LOOP
+    // ═══════════════════════════════════════════════════════════════
+    function update() {
+      if (!gameState.isRunning) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawRoom();
+
+      // Falling items
+      for (let i = gameState.items.length - 1; i >= 0; i--) {
+        const item = gameState.items[i];
+        item.y += item.speed;
+        item.rotation += item.rotationSpeed;
+        item.wobble   += 0.05;
+
+        if (item.y + item.height > canvas.height - 50) {
+          dropItem(item);
+          gameState.lives--;
+          gameState.combo = 0;
+          showFeedback('💔 Dropped!', item.x, canvas.height - 80, false);
+          playSound('damage');
+          updateDisplay();
+          if (gameState.lives <= 0) { gameOver(); return; }
+        } else {
+          drawItem(item);
+        }
+      }
+
+      // Tidy animations
+      gameState.tidyAnimations = gameState.tidyAnimations.filter(anim => {
+        anim.progress += 0.08;
+        if (anim.progress >= 1) {
+          for (let i = 0; i < 5; i++) {
+            gameState.particles.push({
+              x: basket.x, y: basket.y - 20,
+              vx: (Math.random() - 0.5) * 3, vy: -Math.random() * 3,
+              life: 1, color: '#90ee90', size: 6, type: 'sparkle'
+            });
+          }
+          return false;
+        }
+        const t = 1 - Math.pow(1 - anim.progress, 3);
+        const x = anim.startX + (anim.targetX - anim.startX) * t;
+        const y = anim.startY + (anim.targetY - anim.startY) * t;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(1 - anim.progress * 0.5, 1 - anim.progress * 0.5);
+        ctx.font = '40px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(anim.clothing.emoji, 0, 0);
+        ctx.restore();
+        return true;
+      });
+
+      // Particles
+      gameState.particles = gameState.particles.filter(p => {
+        p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+        if (p.type === 'dropped') p.vy += 0.3;
+        if (p.life <= 0) return false;
+
+        ctx.globalAlpha = p.life;
+        if (p.type === 'sparkle') {
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          const r = p.size * p.life, ri = r / 2;
+          for (let i = 0; i < 8; i++) {
+            const angle  = (i * Math.PI) / 4;
+            const radius = i % 2 === 0 ? r : ri;
+            const px = p.x + Math.cos(angle) * radius;
+            const py = p.y + Math.sin(angle) * radius;
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+          }
+          ctx.closePath(); ctx.fill();
+        } else {
+          ctx.font = (p.size * p.life) + 'px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(p.emoji, p.x, p.y);
+        }
+        ctx.globalAlpha = 1;
+        return true;
+      });
+
+      drawBasket();
+      gameLoop = requestAnimationFrame(update);
+    }
+
+    function drawRoom() {
+      // Floor
+      ctx.fillStyle = '#deb887';
+      ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+      ctx.strokeStyle = '#cd853f';
+      ctx.lineWidth = 2;
+      for (let i = 0; i < canvas.width; i += 80) {
+        ctx.beginPath();
+        ctx.moveTo(i, canvas.height - 50);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+      }
+      // Wall picture
+      ctx.fillStyle = 'rgba(255,182,193,0.3)';
+      ctx.fillRect(50, 20, 80, 60);
+      ctx.strokeStyle = '#dda0dd'; ctx.lineWidth = 3;
+      ctx.strokeRect(50, 20, 80, 60);
+      // Window
+      ctx.fillStyle = 'rgba(135,206,235,0.5)';
+      ctx.fillRect(canvas.width - 130, 20, 80, 60);
+      ctx.strokeStyle = '#87ceeb'; ctx.lineWidth = 3;
+      ctx.strokeRect(canvas.width - 130, 20, 80, 60);
+      ctx.beginPath();
+      ctx.moveTo(canvas.width - 90, 20); ctx.lineTo(canvas.width - 90, 80);
+      ctx.moveTo(canvas.width - 130, 50); ctx.lineTo(canvas.width - 50, 50);
+      ctx.stroke();
+    }
+
+    function drawItem(item) {
+      const x = item.x + Math.sin(item.wobble) * 5;
+      const y = item.y;
+      ctx.save();
+      ctx.translate(x, y + item.height / 2);
+      ctx.rotate(item.rotation);
+
+      // Speech bubble
+      ctx.fillStyle   = 'white';
+      ctx.strokeStyle = '#ff6b9d';
+      ctx.lineWidth   = 3;
+      const bw = 100, bh = 35;
+      ctx.beginPath();
+      ctx.roundRect(-bw / 2, -item.height / 2 - bh - 10, bw, bh, 10);
+      ctx.fill(); ctx.stroke();
+
+      // Pointer
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.moveTo(-8, -item.height / 2 - 10);
+      ctx.lineTo(8,  -item.height / 2 - 10);
+      ctx.lineTo(0,  -item.height / 2);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = '#ff6b9d';
+      ctx.beginPath();
+      ctx.moveTo(-8, -item.height / 2 - 10);
+      ctx.lineTo(0,  -item.height / 2);
+      ctx.lineTo(8,  -item.height / 2 - 10);
+      ctx.stroke();
+
+      // Problem text
+      ctx.fillStyle = '#4b0082';
+      ctx.font      = 'bold 15px Fredoka, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.problem, 0, -item.height / 2 - 20);
+
+      // Emoji
+      ctx.font = '45px Arial';
+      ctx.fillText(item.clothing.emoji, 0, 15);
+      ctx.restore();
+    }
+
+    function drawBasket() {
+      const { x, y } = basket;
+      ctx.fillStyle = '#8b4513';
+      ctx.beginPath();
+      ctx.moveTo(x - 50, y - 40);
+      ctx.lineTo(x - 40, y + 20);
+      ctx.lineTo(x + 40, y + 20);
+      ctx.lineTo(x + 50, y - 40);
+      ctx.closePath(); ctx.fill();
+
+      ctx.fillStyle = '#a0522d';
+      ctx.beginPath();
+      ctx.ellipse(x, y - 40, 52, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#654321'; ctx.lineWidth = 2;
+      for (let i = -35; i <= 35; i += 15) {
+        ctx.beginPath();
+        ctx.moveTo(x + i, y - 35);
+        ctx.lineTo(x + i * 0.8, y + 15);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#ffe4b5';
+      ctx.font      = 'bold 11px Fredoka, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('LAUNDRY', x, y);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  UI UPDATES
+    // ═══════════════════════════════════════════════════════════════
+    function updateDisplay() {
+      document.getElementById('score').textContent = gameState.score;
+
+      let stars = '';
+      for (let i = 0; i < gameState.lives; i++) stars += '⭐';
+      for (let i = gameState.lives; i < 3; i++) stars += '💫';
+      document.getElementById('lives').textContent = stars;
+
+      const mood = document.getElementById('parentMood');
+      if      (gameState.lives === 3) mood.textContent = "Mom's Mood: 😊 Chill";
+      else if (gameState.lives === 2) mood.textContent = "Mom's Mood: 😐 Getting sus...";
+      else                            mood.textContent = "Mom's Mood: 😤 Not happy!";
+
+      const combo = document.getElementById('comboDisplay');
+      if (gameState.combo >= 3) {
+        combo.classList.add('visible');
+        document.getElementById('comboCount').textContent = gameState.combo;
+      } else {
+        combo.classList.remove('visible');
+      }
+    }
+
+    function updateCurrentProblem() {
+      const el = document.getElementById('currentProblem');
+      if (gameState.items.length === 0) { el.textContent = '--'; return; }
+      const lowest = gameState.items.reduce((l, i) => (!l || i.y > l.y) ? i : l, null);
+      if (lowest) el.textContent = lowest.problem + ' =';
+    }
+
+    function showFeedback(text, x, y, isCorrect) {
+      const el = document.createElement('div');
+      el.className  = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+      el.textContent = text;
+      el.style.left = (x / canvas.width  * 100) + '%';
+      el.style.top  = (y / canvas.height * 100 + 15) + '%';
+      document.getElementById('gameContainer').appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+    }
+
+    function showSixSeven() {
+      const container = document.getElementById('gameContainer');
+      container.classList.add('shake');
+      setTimeout(() => container.classList.remove('shake'), 500);
+
+      const popup = document.createElement('div');
+      popup.className = 'six-seven-popup';
+      popup.innerHTML = '🎉 SIX SEVEN! 🎉<br><span style="font-size:22px">Why was 6 afraid of 7?</span>';
+      container.appendChild(popup);
+      playSound('sixseven');
+      setTimeout(() => popup.remove(), 1500);
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  AUDIO
+    // ═══════════════════════════════════════════════════════════════
+    function playSound(type) {
+      try {
+        const ctx2  = new (window.AudioContext || window.webkitAudioContext)();
+        const osc   = ctx2.createOscillator();
+        const gain  = ctx2.createGain();
+        osc.connect(gain); gain.connect(ctx2.destination);
+
+        if (type === 'correct') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, ctx2.currentTime);
+          osc.frequency.setValueAtTime(659.25, ctx2.currentTime + 0.1);
+          osc.frequency.setValueAtTime(783.99, ctx2.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.3, ctx2.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx2.currentTime + 0.4);
+          osc.start(ctx2.currentTime); osc.stop(ctx2.currentTime + 0.4);
+        } else if (type === 'wrong') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(250, ctx2.currentTime);
+          osc.frequency.setValueAtTime(200, ctx2.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.3, ctx2.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx2.currentTime + 0.25);
+          osc.start(ctx2.currentTime); osc.stop(ctx2.currentTime + 0.25);
+        } else if (type === 'damage') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, ctx2.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(80, ctx2.currentTime + 0.3);
+          gain.gain.setValueAtTime(0.2, ctx2.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx2.currentTime + 0.3);
+          osc.start(ctx2.currentTime); osc.stop(ctx2.currentTime + 0.3);
+        } else if (type === 'sixseven') {
+          osc.type = 'sine';
+          [392, 523.25, 659.25, 783.99, 659.25, 783.99, 1046.5].forEach((f, i) => {
+            osc.frequency.setValueAtTime(f, ctx2.currentTime + i * 0.1);
+          });
+          gain.gain.setValueAtTime(0.3, ctx2.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx2.currentTime + 0.8);
+          osc.start(ctx2.currentTime); osc.stop(ctx2.currentTime + 0.8);
+        }
+      } catch (e) { /* audio not supported */ }
+    }
+
+    window.addEventListener('load', init);
+  </script>
+
+</body>
+</html>
