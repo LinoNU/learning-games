@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puppy Treat Bakery – Dr. Lino's Learning Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design Tokens ──────────────────────────────────────────── */
+    :root {
+      --clr-bg:         #f5f0e8;
+      --clr-surface:    #ffffff;
+      --clr-text:       #2c2c3a;
+      --clr-muted:      #7a7a8c;
+      --clr-math:       #ff6b6b;
+      --clr-header-bg:  #2c2c3a;
+      --clr-header-txt: #f5f0e8;
+      --clr-fun:        #ffd166;
+      --radius-card:    18px;
+      --radius-badge:   50px;
+      --shadow-card:    0 4px 20px rgba(44,44,58,0.10);
+      --font-display:   'Fredoka', sans-serif;
+      --font-body:      'Nunito', sans-serif;
+
+      /* Game palette */
+      --clr-brown:      #8b4513;
+      --clr-brown-dark: #5d3010;
+      --clr-brown-soft: #fff3e0;
+      --clr-orange:     #ff6b35;
+      --clr-teal:       #4ecdc4;
+      --clr-teal-dark:  #44a08d;
+      --clr-purple:     #667eea;
+      --clr-purple-dark:#764ba2;
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: var(--clr-text);
+    }
+
+    /* ─── Site Header ────────────────────────────────────────────── */
+    .site-header {
+      background-color: var(--clr-header-bg);
+      color: var(--clr-header-txt);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-link {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--clr-fun);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 0.8; text-decoration: underline; }
+
+    .site-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      flex: 1;
+      text-align: center;
+    }
+
+    /* ─── Main ───────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      padding: 24px 20px;
+    }
+
+    .game-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ─── Stats Bar ──────────────────────────────────────────────── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: var(--clr-surface);
+      padding: 10px 20px;
+      border-radius: var(--radius-badge);
+      box-shadow: var(--shadow-card);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--clr-brown-dark);
+    }
+    .stat span { color: var(--clr-math); }
+    .streak-fire { color: #ff4500 !important; }
+
+    /* ─── Main Game Panel ────────────────────────────────────────── */
+    .main-game {
+      background: var(--clr-surface);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      text-align: center;
+    }
+
+    /* ─── Puppy ──────────────────────────────────────────────────── */
+    .puppy-container {
+      position: relative;
+      height: 180px;
+      margin-bottom: 20px;
+    }
+
+    .puppy {
+      font-size: 110px;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+    .puppy.happy { animation: wiggle 0.5s ease; }
+    .puppy.sad   { animation: shakeX 0.5s ease; }
+
+    @keyframes wiggle {
+      0%,100% { transform: rotate(0deg); }
+      25%     { transform: rotate(-10deg); }
+      75%     { transform: rotate(10deg); }
+    }
+    @keyframes shakeX {
+      0%,100% { transform: translateX(0); }
+      25%     { transform: translateX(-10px); }
+      75%     { transform: translateX(10px); }
+    }
+
+    .speech-bubble {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff9c4;
+      padding: 12px 22px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--clr-brown-dark);
+      max-width: 300px;
+      white-space: nowrap;
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -14px; left: 50%;
+      transform: translateX(-50%);
+      border: 9px solid transparent;
+      border-top-color: #fff9c4;
+    }
+
+    /* ─── Mode Toggle ────────────────────────────────────────────── */
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      padding: 9px 18px;
+      border: 2px solid var(--clr-brown);
+      background: white;
+      color: var(--clr-brown);
+      border-radius: var(--radius-badge);
+      cursor: pointer;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .mode-btn.active, .mode-btn:hover {
+      background: var(--clr-brown);
+      color: white;
+    }
+
+    /* ─── Difficulty ─────────────────────────────────────────────── */
+    .difficulty-section {
+      margin-bottom: 16px;
+      font-family: var(--font-body);
+    }
+    .difficulty-section label { color: var(--clr-muted); margin-right: 8px; font-weight: 600; }
+    .difficulty-section select {
+      padding: 7px 14px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+    }
+
+    /* ─── Problem ────────────────────────────────────────────────── */
+    .problem-section { margin: 24px 0; }
+
+    .instruction {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      color: var(--clr-muted);
+      margin-bottom: 12px;
+    }
+
+    .fraction-display {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--clr-brown);
+      margin: 16px 0;
+    }
+
+    .fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      line-height: 1.2;
+    }
+    .fraction-line {
+      width: 100%;
+      height: 4px;
+      background: var(--clr-brown);
+      margin: 2px 0;
+    }
+
+    /* ─── Visual Hint ────────────────────────────────────────────── */
+    .visual-hint {
+      margin: 16px 0;
+      padding: 14px;
+      background: var(--clr-brown-soft);
+      border-radius: 14px;
+      display: none;
+    }
+    .visual-hint.show { display: block; }
+    .visual-hint strong { font-family: var(--font-display); color: var(--clr-brown); }
+
+    .boxes-display {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .treat-box {
+      width: 60px;
+      height: 60px;
+      border: 3px solid var(--clr-brown);
+      border-radius: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(14px, 1fr));
+      gap: 2px;
+      padding: 4px;
+      background: #ffecb3;
+    }
+    .treat {
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── Answer Section ─────────────────────────────────────────── */
+    .answer-section { margin: 24px 0; }
+
+    .answer-inputs {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .input-group label {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--clr-muted);
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      height: 50px;
+      font-size: 1.4rem;
+      font-family: var(--font-display);
+      text-align: center;
+      border: 3px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--clr-text);
+    }
+    input[type="number"]:focus { border-color: var(--clr-math); }
+
+    .fraction-input {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .fraction-input input { width: 60px; height: 44px; }
+    .fraction-input .fraction-line { width: 60px; }
+
+    .whole-number-hint {
+      display: none;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--clr-teal-dark);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    /* ─── Buttons ────────────────────────────────────────────────── */
+    .btn {
+      padding: 13px 36px;
+      font-size: 1.1rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      border: none;
+      border-radius: var(--radius-badge);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--clr-math) 0%, var(--clr-orange) 100%);
+      color: white;
+      margin-top: 18px;
+    }
+    .btn-hint {
+      background: linear-gradient(135deg, var(--clr-teal) 0%, var(--clr-teal-dark) 100%);
+      color: white;
+      padding: 9px 22px;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+    .btn-next {
+      background: linear-gradient(135deg, var(--clr-purple) 0%, var(--clr-purple-dark) 100%);
+      color: white;
+      margin-top: 18px;
+    }
+
+    /* ─── Feedback ───────────────────────────────────────────────── */
+    .feedback {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 18px 0;
+      padding: 14px;
+      border-radius: 14px;
+      display: none;
+    }
+    .feedback.correct {
+      display: block;
+      background: #c8e6c9;
+      color: #2e7d32;
+      animation: pop 0.3s ease;
+    }
+    .feedback.incorrect {
+      display: block;
+      background: #ffcdd2;
+      color: #c62828;
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      0%   { transform: scale(0.8); }
+      50%  { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* ─── Puppy Collection ───────────────────────────────────────── */
+    .unlocked-puppies {
+      margin-top: 28px;
+      padding: 18px;
+      background: #f5f5f5;
+      border-radius: 18px;
+    }
+    .unlocked-puppies h3 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--clr-brown-dark);
+      margin-bottom: 8px;
+    }
+    .unlocked-puppies p {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--clr-muted);
+      margin-bottom: 10px;
+    }
+
+    .puppy-collection {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .puppy-badge {
+      font-size: 38px;
+      opacity: 0.3;
+      filter: grayscale(100%);
+      transition: opacity 0.3s, filter 0.3s;
+    }
+    .puppy-badge.unlocked { opacity: 1; filter: grayscale(0%); }
+
+    /* ─── Start Screen ───────────────────────────────────────────── */
+    .start-screen { text-align: center; padding: 32px 20px; }
+    .start-screen h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--clr-brown);
+      margin-bottom: 12px;
+    }
+    .start-screen p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--clr-muted);
+      margin: 16px 0;
+      line-height: 1.7;
+    }
+    .start-puppy {
+      font-size: 90px;
+      display: block;
+      margin-bottom: 8px;
+      animation: bounce 1s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-18px); }
+    }
+
+    /* ─── Confetti ───────────────────────────────────────────────── */
+    .celebration {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    .confetti {
+      position: absolute;
+      width: 10px; height: 10px;
+      animation: fall 3s linear forwards;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ─── Utility ────────────────────────────────────────────────── */
+    .hidden { display: none !important; }
+
+    /* ─── Site Footer ────────────────────────────────────────────── */
+    footer {
+      background-color: var(--clr-header-bg);
+      color: rgba(245,240,232,0.6);
+      text-align: center;
+      padding: 1.25rem 1rem;
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+    }
+    footer a {
+      color: var(--clr-fun);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 500px) {
+      .main-game { padding: 18px; }
+      .fraction-display { font-size: 1.8rem; }
+      .stat { font-size: 0.88rem; padding: 8px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Site Header ───────────────────────────────────────────── -->
+  <header class="site-header">
+    <a class="back-link" href="../../index.html">← All Games</a>
+    <h1>🦴 Puppy Treat Bakery 🐕</h1>
+    <span style="min-width:100px;"></span>
+  </header>
+
+  <!-- ── Game ──────────────────────────────────────────────────── -->
+  <main>
+    <div class="game-container">
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat">🍪 Treats Served: <span id="score">0</span></div>
+        <div class="stat">🔥 Streak: <span id="streak" class="streak-fire">0</span></div>
+        <div class="stat">⭐ Puppy Points: <span id="points">0</span></div>
+      </div>
+
+      <div class="main-game">
+
+        <!-- ── Start Screen ──────────────────────────────────── -->
+        <div id="start-screen" class="start-screen">
+          <span class="start-puppy" role="img" aria-label="puppy">🐕</span>
+          <h2>Welcome to the Puppy Treat Bakery!</h2>
+          <p>
+            Puppies are hungry and need your help! 🐾<br><br>
+            Package treat orders by converting between<br>
+            <strong>improper fractions</strong> and <strong>mixed numbers</strong>.<br><br>
+            Full boxes = whole numbers &nbsp;·&nbsp; Individual treats = the fraction part<br><br>
+            Get answers right to make puppies happy and unlock new puppy friends!
+          </p>
+          <button class="btn btn-primary" id="start-btn">Let's Bake! 🍪</button>
+        </div>
+
+        <!-- ── Game Screen ────────────────────────────────────── -->
+        <div id="game-screen" class="hidden">
+
+          <div class="mode-toggle" role="group" aria-label="Problem mode">
+            <button class="mode-btn active" id="mode-improper" data-mode="improper">Improper → Mixed</button>
+            <button class="mode-btn"        id="mode-mixed"    data-mode="mixed">Mixed → Improper</button>
+            <button class="mode-btn"        id="mode-random"   data-mode="random">Mix It Up!</button>
+          </div>
+
+          <div class="difficulty-section">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty">
+              <option value="easy">Easy (small numbers)</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard (bigger numbers)</option>
+            </select>
+          </div>
+
+          <div class="puppy-container">
+            <div class="speech-bubble" id="speech-bubble" aria-live="polite">I'd like some treats please!</div>
+            <div class="puppy" id="puppy" role="img" aria-label="puppy">🐕</div>
+          </div>
+
+          <div class="problem-section">
+            <p class="instruction" id="instruction"></p>
+            <div class="fraction-display" id="problem-display" aria-live="polite"></div>
+          </div>
+
+          <div class="visual-hint" id="visual-hint" aria-live="polite">
+            <strong>💡 Hint: Here's what the treats look like!</strong>
+            <div class="boxes-display" id="boxes-display"></div>
+          </div>
+
+          <button class="btn btn-hint" id="hint-btn">Show Hint 💡</button>
+
+          <div class="answer-section">
+            <p class="whole-number-hint" id="whole-number-hint">
+              💡 Tip: If it's a whole number, just fill in the "Whole" box and leave the fraction empty or as 0!
+            </p>
+
+            <!-- Improper → Mixed inputs -->
+            <div id="mixed-inputs" class="answer-inputs" aria-label="Mixed number answer">
+              <div class="input-group">
+                <label for="whole-input">Whole:</label>
+                <input type="number" id="whole-input" min="0" placeholder="?" aria-label="Whole number" />
+              </div>
+              <div class="fraction-input" aria-label="Fraction part">
+                <input type="number" id="num-input"   min="0" placeholder="?" aria-label="Numerator" />
+                <div class="fraction-line" role="presentation"></div>
+                <input type="number" id="denom-input" min="1" placeholder="?" aria-label="Denominator" />
+              </div>
+            </div>
+
+            <!-- Mixed → Improper inputs -->
+            <div id="improper-inputs" class="answer-inputs hidden" aria-label="Improper fraction answer">
+              <div class="fraction-input">
+                <input type="number" id="improper-num-input"   min="0" placeholder="?" aria-label="Numerator" />
+                <div class="fraction-line" role="presentation"></div>
+                <input type="number" id="improper-denom-input" min="1" placeholder="?" aria-label="Denominator" />
+              </div>
+            </div>
+          </div>
+
+          <div class="feedback" id="feedback" aria-live="assertive"></div>
+
+          <button class="btn btn-primary" id="check-btn">Serve Treats! 🍪</button>
+          <button class="btn btn-next hidden" id="next-btn">Next Puppy! 🐾</button>
+
+        </div><!-- /#game-screen -->
+
+        <!-- Puppy Collection -->
+        <div class="unlocked-puppies">
+          <h3>🏆 Your Puppy Collection</h3>
+          <p>Earn points to unlock new puppies!</p>
+          <div class="puppy-collection" id="puppy-collection">
+            <span class="puppy-badge unlocked" title="Starter Pup (0 pts)"   role="img" aria-label="Starter Pup">🐕</span>
+            <span class="puppy-badge"          title="Golden (50 pts)"        role="img" aria-label="Golden (locked)">🐕‍🦺</span>
+            <span class="puppy-badge"          title="Poodle (100 pts)"       role="img" aria-label="Poodle (locked)">🐩</span>
+            <span class="puppy-badge"          title="Hot Dog (200 pts)"      role="img" aria-label="Hot Dog (locked)">🌭</span>
+            <span class="puppy-badge"          title="Wolf (350 pts)"         role="img" aria-label="Wolf (locked)">🐺</span>
+            <span class="puppy-badge"          title="Fox (500 pts)"          role="img" aria-label="Fox (locked)">🦊</span>
+          </div>
+        </div>
+
+      </div><!-- /.main-game -->
+    </div><!-- /.game-container -->
+  </main>
+
+  <!-- Confetti layer -->
+  <div class="celebration" id="celebration" aria-hidden="true"></div>
+
+  <!-- ── Site Footer ───────────────────────────────────────────── -->
+  <footer>
+    <p>Dr. Lino's Learning Games &nbsp;·&nbsp; <a href="https://linocoria.com" target="_blank" rel="noopener">linocoria.com</a></p>
+  </footer>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    //  GAME STATE
+    // ═══════════════════════════════════════════════════════════════
+    const state = {
+      score: 0, streak: 0, points: 0,
+      mode: 'improper',
+      currentProblem: null,
+      unlockedPuppies: ['🐕'],
+      currentPuppy: '🐕'
+    };
+
+    const PUPPY_UNLOCKS = [
+      { emoji: '🐕',   points: 0 },
+      { emoji: '🐕‍🦺', points: 50 },
+      { emoji: '🐩',   points: 100 },
+      { emoji: '🌭',   points: 200 },
+      { emoji: '🐺',   points: 350 },
+      { emoji: '🦊',   points: 500 }
+    ];
+
+    const PUPPY_SAYINGS = [
+      "I'd like some treats please!", "Woof! Package my treats!",
+      "My tummy is rumbling!", "*tail wagging intensifies*",
+      "Treats? For me?!", "I've been a good pup!",
+      "Arf arf! Treat time!", "Is that bacon I smell?"
+    ];
+    const HAPPY_SAYINGS = [
+      "Yummy! Thank you! 🎉", "Best treats ever! 💕",
+      "*happy dance* 🐾", "You're the best! ⭐",
+      "Woof woof! Delicious!", "More more more! 🍪"
+    ];
+    const SAD_SAYINGS = [
+      "Hmm, that's not quite right...", "Let me count again...",
+      "Almost! Try once more!", "Oops! Check your math!",
+      "Not quite, but you've got this!"
+    ];
+
+    // ═══════════════════════════════════════════════════════════════
+    //  INIT
+    // ═══════════════════════════════════════════════════════════════
+    document.getElementById('start-btn').addEventListener('click', startGame);
+    document.getElementById('check-btn').addEventListener('click', checkAnswer);
+    document.getElementById('next-btn').addEventListener('click', generateProblem);
+    document.getElementById('hint-btn').addEventListener('click', showHint);
+    document.getElementById('difficulty').addEventListener('change', generateProblem);
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.mode = btn.dataset.mode;
+        generateProblem();
+      });
+    });
+
+    document.addEventListener('keypress', e => {
+      if (e.key !== 'Enter') return;
+      const checkBtn = document.getElementById('check-btn');
+      const nextBtn  = document.getElementById('next-btn');
+      if (!checkBtn.classList.contains('hidden')) checkAnswer();
+      else if (!nextBtn.classList.contains('hidden')) generateProblem();
+    });
+
+    // ═══════════════════════════════════════════════════════════════
+    //  GAME CONTROL
+    // ═══════════════════════════════════════════════════════════════
+    function startGame() {
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('game-screen').classList.remove('hidden');
+      generateProblem();
+    }
+
+    function getDifficultyRange() {
+      switch (document.getElementById('difficulty').value) {
+        case 'easy':   return { minNum: 3,  maxNum: 10, minDenom: 2, maxDenom: 4  };
+        case 'medium': return { minNum: 5,  maxNum: 20, minDenom: 2, maxDenom: 6  };
+        case 'hard':   return { minNum: 10, maxNum: 40, minDenom: 3, maxDenom: 10 };
+      }
+    }
+
+    function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+
+    function generateProblem() {
+      // Reset UI
+      const feedback = document.getElementById('feedback');
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+      document.getElementById('check-btn').classList.remove('hidden');
+      document.getElementById('next-btn').classList.add('hidden');
+      document.getElementById('visual-hint').classList.remove('show');
+      document.getElementById('whole-number-hint').style.display = 'none';
+      document.querySelectorAll('input').forEach(i => { i.value = ''; i.disabled = false; });
+
+      const type  = state.mode === 'random'
+        ? (Math.random() < 0.5 ? 'improper' : 'mixed')
+        : state.mode;
+      const range = getDifficultyRange();
+
+      if (type === 'improper') {
+        const denom = Math.floor(Math.random() * (range.maxDenom - range.minDenom + 1)) + range.minDenom;
+        const num   = Math.max(
+          Math.floor(Math.random() * (range.maxNum - range.minNum + 1)) + range.minNum,
+          denom + 1
+        );
+        state.currentProblem = {
+          type: 'improper', numerator: num, denominator: denom,
+          whole: Math.floor(num / denom), remainder: num % denom
+        };
+
+        document.getElementById('instruction').textContent =
+          'Convert this improper fraction to a mixed number:';
+        document.getElementById('problem-display').innerHTML =
+          `<span class="fraction"><span class="numerator">${num}</span><div class="fraction-line"></div><span class="denominator">${denom}</span></span>`;
+
+        if (num % denom === 0)
+          document.getElementById('whole-number-hint').style.display = 'block';
+
+        document.getElementById('mixed-inputs').classList.remove('hidden');
+        document.getElementById('improper-inputs').classList.add('hidden');
+
+      } else {
+        const denom     = Math.floor(Math.random() * (range.maxDenom - range.minDenom + 1)) + range.minDenom;
+        const whole     = Math.floor(Math.random() * 5) + 1;
+        const remainder = Math.floor(Math.random() * (denom - 1)) + 1;
+        const num       = whole * denom + remainder;
+        state.currentProblem = {
+          type: 'mixed', numerator: num, denominator: denom,
+          whole, remainder
+        };
+
+        document.getElementById('instruction').textContent =
+          'Convert this mixed number to an improper fraction:';
+        document.getElementById('problem-display').innerHTML =
+          `${whole} <span class="fraction"><span class="numerator">${remainder}</span><div class="fraction-line"></div><span class="denominator">${denom}</span></span>`;
+
+        document.getElementById('mixed-inputs').classList.add('hidden');
+        document.getElementById('improper-inputs').classList.remove('hidden');
+      }
+
+      updatePuppy();
+      document.getElementById('speech-bubble').textContent =
+        PUPPY_SAYINGS[Math.floor(Math.random() * PUPPY_SAYINGS.length)];
+      document.querySelector('#game-screen input:not([disabled])').focus();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  HINT
+    // ═══════════════════════════════════════════════════════════════
+    function showHint() {
+      document.getElementById('visual-hint').classList.add('show');
+      const { numerator, denominator } = state.currentProblem;
+      const fullBoxes = Math.floor(numerator / denominator);
+      const remaining = numerator % denominator;
+      let html = '';
+
+      for (let i = 0; i < fullBoxes; i++) {
+        html += '<div class="treat-box">';
+        for (let j = 0; j < denominator; j++) html += '<span class="treat">🍪</span>';
+        html += '</div>';
+      }
+      if (remaining > 0) {
+        html += '<div class="treat-box" style="border-style:dashed">';
+        for (let j = 0; j < remaining;    j++) html += '<span class="treat">🍪</span>';
+        for (let j = remaining; j < denominator; j++) html += '<span class="treat" style="opacity:0.2">🍪</span>';
+        html += '</div>';
+      }
+      document.getElementById('boxes-display').innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  CHECK ANSWER
+    // ═══════════════════════════════════════════════════════════════
+    function checkAnswer() {
+      const p = state.currentProblem;
+      let isCorrect = false;
+
+      if (p.type === 'improper') {
+        const wholeAns = parseInt(document.getElementById('whole-input').value,  10) || 0;
+        const numAns   = parseInt(document.getElementById('num-input').value,    10) || 0;
+        const denomAns = parseInt(document.getElementById('denom-input').value,  10) || 0;
+
+        if (p.remainder === 0) {
+          isCorrect = wholeAns === p.whole && numAns === 0;
+        } else {
+          const userG    = denomAns > 0 ? gcd(numAns, denomAns) : 1;
+          const correctG = gcd(p.remainder, p.denominator);
+          isCorrect = wholeAns === p.whole &&
+            (numAns / userG === p.remainder / correctG) &&
+            (denomAns / userG === p.denominator / correctG);
+        }
+      } else {
+        const numAns   = parseInt(document.getElementById('improper-num-input').value,   10) || 0;
+        const denomAns = parseInt(document.getElementById('improper-denom-input').value, 10) || 0;
+        isCorrect = numAns === p.numerator && denomAns === p.denominator;
+        if (!isCorrect) {
+          const g = gcd(numAns, denomAns), cg = gcd(p.numerator, p.denominator);
+          isCorrect = (numAns / g === p.numerator / cg) && (denomAns / g === p.denominator / cg);
+        }
+      }
+
+      const feedback = document.getElementById('feedback');
+      const puppy    = document.getElementById('puppy');
+      const bubble   = document.getElementById('speech-bubble');
+
+      if (isCorrect) {
+        state.score++;
+        state.streak++;
+        const pts = 10 + state.streak * 2;
+        state.points += pts;
+        feedback.textContent = `🎉 Correct! +${pts} points!`;
+        feedback.className   = 'feedback correct';
+        puppy.classList.add('happy');
+        setTimeout(() => puppy.classList.remove('happy'), 500);
+        bubble.textContent = HAPPY_SAYINGS[Math.floor(Math.random() * HAPPY_SAYINGS.length)];
+        createConfetti();
+        checkUnlocks();
+      } else {
+        state.streak = 0;
+        const correctAnswer = p.type === 'improper'
+          ? (p.remainder === 0 ? `${p.whole}` : `${p.whole} ${p.remainder}/${p.denominator}`)
+          : `${p.numerator}/${p.denominator}`;
+        feedback.textContent = `Not quite! The answer was ${correctAnswer}`;
+        feedback.className   = 'feedback incorrect';
+        puppy.classList.add('sad');
+        setTimeout(() => puppy.classList.remove('sad'), 500);
+        bubble.textContent = SAD_SAYINGS[Math.floor(Math.random() * SAD_SAYINGS.length)];
+      }
+
+      updateStats();
+      document.querySelectorAll('input').forEach(i => i.disabled = true);
+      document.getElementById('check-btn').classList.add('hidden');
+      document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  UI HELPERS
+    // ═══════════════════════════════════════════════════════════════
+    function updateStats() {
+      document.getElementById('score').textContent  = state.score;
+      document.getElementById('streak').textContent = state.streak;
+      document.getElementById('points').textContent = state.points;
+    }
+
+    function updatePuppy() {
+      state.currentPuppy = state.unlockedPuppies[
+        Math.floor(Math.random() * state.unlockedPuppies.length)
+      ];
+      document.getElementById('puppy').textContent = state.currentPuppy;
+    }
+
+    function checkUnlocks() {
+      const badges = document.querySelectorAll('#puppy-collection .puppy-badge');
+      PUPPY_UNLOCKS.forEach((unlock, i) => {
+        if (state.points >= unlock.points && !state.unlockedPuppies.includes(unlock.emoji)) {
+          state.unlockedPuppies.push(unlock.emoji);
+          badges[i].classList.add('unlocked');
+          document.getElementById('speech-bubble').textContent =
+            `🎊 NEW PUPPY UNLOCKED: ${unlock.emoji}!`;
+        }
+      });
+    }
+
+    function createConfetti() {
+      const container = document.getElementById('celebration');
+      const colors = ['#ff6b6b','#4ecdc4','#ffe66d','#95e1d3','#f38181','#aa96da'];
+      for (let i = 0; i < 30; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        el.style.left            = Math.random() * 100 + '%';
+        el.style.background      = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDelay  = Math.random() * 0.5 + 's';
+        el.style.borderRadius    = Math.random() > 0.5 ? '50%' : '0';
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+      }
+    }
+  </script>
+
+</body>
+</html>
