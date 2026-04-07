@@ -549,44 +549,47 @@ function buildSeriesSVG(active) {
   svg += `<line x1="${RAIL_END}" y1="${S_TOP_Y}" x2="${RAIL_END}" y2="${S_BOT_Y}"
     stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
 
-  // Top wire with per-slot gaps where bulb leads connect
-  // Lead connection points on the wire: (cx-7, S_TOP_Y) and (cx+7, S_TOP_Y)
+  // Top wire — breaks only where a bulb is placed; empty slots float above it.
+  // prevX tracks the rightmost x the continuous wire has reached so far.
+  // For occupied slots  : wire stops at lc, teal leads + bulb drawn, prevX = rc.
+  // For empty slots     : wire keeps running straight (prevX unchanged),
+  //                       socket drawn with zero-length internal leads so it
+  //                       floats detached above the wire — no connection implied.
   let prevX = RAIL_START;
   for (let i = 0; i < MAX_SLOTS; i++) {
-    const cx  = slotX(i);
-    const lc  = cx - 7;   // left lead touches wire here
-    const rc  = cx + 7;   // right lead touches wire here
-
-    // Wire segment up to left lead contact
-    svg += `<line x1="${prevX}" y1="${S_TOP_Y}" x2="${lc}" y2="${S_TOP_Y}"
-      stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
+    const cx      = slotX(i);
+    const lc      = cx - 7;   // left lead contact on wire
+    const rc      = cx + 7;   // right lead contact on wire
+    const baseBot = BULB_CY + 15 + 6; // bottom of bulb base rect
 
     if (seriesSlots[i] && active) {
-      // Teal wire leads from the gap up to the bulb base
-      // (these are part of the circuit path — teal colored)
-      const baseBot = BULB_CY + 15 + 6; // glass bottom + base height
+      // Wire segment up to where this bulb's left lead joins
+      svg += `<line x1="${prevX}" y1="${S_TOP_Y}" x2="${lc}" y2="${S_TOP_Y}"
+        stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
+      // Teal leads rising from the wire gap up into the bulb
       svg += `<line x1="${lc}" y1="${S_TOP_Y}" x2="${lc}" y2="${baseBot}"
         stroke="${wc}" stroke-width="2.5" stroke-linecap="round"/>`;
       svg += `<line x1="${rc}" y1="${S_TOP_Y}" x2="${rc}" y2="${baseBot}"
         stroke="${wc}" stroke-width="2.5" stroke-linecap="round"/>`;
-      // Bulb: wire contacts at bottom of leads (lc/rc, baseBot)
-      // leads inside drawnBulb are cosmetic only (draw as gray from wire point to base)
       svg += drawnBulb(
         cx, BULB_CY, pct, pw, i, 'series',
-        lc, S_TOP_Y,   // wire contact A
-        rc, S_TOP_Y,   // wire contact B
-        cx, S_TOP_Y + 14  // power label position (below wire)
+        lc, S_TOP_Y,       // wire contact A
+        rc, S_TOP_Y,       // wire contact B
+        cx, S_TOP_Y + 14   // power label (below wire)
       );
+      prevX = rc; // wire resumes after the bulb gap
     } else {
+      // Empty slot: wire does NOT break here.
+      // Socket floats above the wire; zero-length leads keep it visually detached.
       svg += dropZone(
         cx, BULB_CY, i, 'series', active,
-        lc, S_TOP_Y,
-        rc, S_TOP_Y
+        lc, baseBot,   // wireA == base corner → zero-length lead A (invisible)
+        rc, baseBot    // wireB == base corner → zero-length lead B (invisible)
       );
+      // prevX intentionally NOT updated — wire runs straight under this socket
     }
-    prevX = rc;
   }
-  // Final top wire segment to closing wire
+  // Remainder of top wire from last bulb (or RAIL_START) to closing wire
   svg += `<line x1="${prevX}" y1="${S_TOP_Y}" x2="${RAIL_END}" y2="${S_TOP_Y}"
     stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
 
@@ -651,12 +654,17 @@ function buildParallelSVG(active) {
         cx + 26, BULB_CY + 5  // power label position (right of bulb)
       );
     } else {
-      // Dashed drop zone spanning rail-to-rail
-      svg += dropZone(
-        cx, BULB_CY, i, 'parallel', active,
-        cx, P_TOP_Y,
-        cx, P_BOT_Y
-      );
+      // Vertical dashed stubs from each rail down/up to the socket
+      const glassTopY = BULB_CY - 15;
+      const col = active ? '#4ecdc4' : '#ccc';
+      svg += `<line x1="${cx}" y1="${P_TOP_Y}" x2="${cx}" y2="${glassTopY}"
+        stroke="${col}" stroke-width="2" stroke-dasharray="3 2"/>`;
+      svg += `<line x1="${cx}" y1="${baseBot}" x2="${cx}" y2="${P_BOT_Y}"
+        stroke="${col}" stroke-width="2" stroke-dasharray="3 2"/>`;
+      // Zero-length leads so dropZone draws no internal diagonals
+      const lc = cx - 7, rc = cx + 7;
+      svg += dropZone(cx, BULB_CY, i, 'parallel', active,
+        lc, baseBot, rc, baseBot);
     }
   }
 
