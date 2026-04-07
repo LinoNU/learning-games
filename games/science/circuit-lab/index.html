@@ -812,18 +812,29 @@ function renderTray() {
 
 // ─── Why Banner ───────────────────────────────────────────────────────────
 const MSGS = {
-  'series-first':    "Great start! Watch the Power per bulb (P = V × I) — that's what tells you how bright each bulb will be.",
-  'series-add':      "You added a bulb in series! The current has to push through more resistance, so it slows down — and every bulb gets dimmer.",
-  'series-remove':   "You removed a series bulb! Less resistance means more current flows — the remaining bulbs get brighter.",
-  'parallel-first':  "Great start! Watch the Power per bulb (P = V × I) — that's what tells you how bright each bulb will be.",
-  'parallel-add':    "You added a bulb in parallel! Each bulb has its own path to the battery, so they all get the full 9V — brightness stays the same!",
-  'parallel-remove': "You removed a parallel bulb. The other bulbs still have their own paths to the battery, so their brightness doesn't change.",
-  'empty':           "The circuit is empty. Drag a bulb onto the circuit to see what happens!",
-  'default':         "Drag a light bulb onto the circuit to get started!",
+  'series-first':       "Great start! Watch the Power per bulb (P = V × I) — that's what tells you how bright each bulb will be.",
+  'series-add':         "You added a bulb in series! The current has to push through more resistance, so it slows down — and every bulb gets dimmer.",
+  'series-remove':      "You removed a series bulb! Less resistance means more current flows — the remaining bulbs get brighter.",
+  'series-power-up':    "More current is flowing now! Each bulb's power jumped to {P} W (P = V × I) — that's why they're brighter!",
+  'series-power-down':  "The current slowed down. Each bulb is now using only {P} W (P = V × I) — less power means dimmer light.",
+  'parallel-first':     "Great start! Watch the Power per bulb (P = V × I) — that's what tells you how bright each bulb will be.",
+  'parallel-add':       "You added a bulb in parallel! Each bulb has its own path to the battery, so they all get the full 9V — brightness stays the same!",
+  'parallel-remove':    "You removed a parallel bulb. The other bulbs still have their own paths to the battery, so their brightness doesn't change.",
+  'parallel-power-same':"Even with {n} bulbs, each one still gets 9 V and uses 27.00 W (P = 9 V × 3 A). Parallel keeps power constant!",
+  'empty':              "The circuit is empty. Drag a bulb onto the circuit to see what happens!",
+  'default':            "Drag a light bulb onto the circuit to get started!",
 };
 
-function setWhy(key) {
-  document.getElementById('why-text').textContent = MSGS[key] || MSGS.default;
+function formatMsg(key, data = {}) {
+  let msg = MSGS[key] || MSGS.default;
+  Object.entries(data).forEach(([k, v]) => {
+    msg = msg.replaceAll(`{${k}}`, v);
+  });
+  return msg;
+}
+
+function setWhy(key, data = {}) {
+  document.getElementById('why-text').textContent = formatMsg(key, data);
   const banner = document.getElementById('why-banner');
   banner.classList.remove('flash');
   void banner.offsetWidth; // force reflow to restart animation
@@ -907,17 +918,29 @@ document.addEventListener('click', e => {
 // ─── Place / Remove ───────────────────────────────────────────────────────
 function placeBulb(slot, rail) {
   if (available() <= 0) return;
+
   if (rail === 'series') {
     if (mode === 'parallel') return;
     if (seriesSlots[slot]) return;
     seriesSlots[slot] = true;
-    setWhy(nS() === 1 ? 'series-first' : 'series-add');
+    const ss = calcSeries(nS());
+    if (nS() === 1) {
+      setWhy('series-first');
+    } else {
+      setWhy('series-power-down', { P: ss.P_bulb.toFixed(2) });
+    }
+
   } else {
     if (mode === 'series') return;
     if (parallelSlots[slot]) return;
     parallelSlots[slot] = true;
-    setWhy(nP() === 1 ? 'parallel-first' : 'parallel-add');
+    if (nP() === 1) {
+      setWhy('parallel-first');
+    } else {
+      setWhy('parallel-power-same', { n: nP() });
+    }
   }
+
   refresh();
 }
 
@@ -925,12 +948,27 @@ function removeBulb(slot, rail) {
   if (rail === 'series') {
     if (!seriesSlots[slot]) return;
     seriesSlots[slot] = false;
-    setWhy(nS() + nP() === 0 ? 'empty' : 'series-remove');
+    if (nS() + nP() === 0) {
+      setWhy('empty');
+    } else if (nS() === 0) {
+      setWhy('empty');
+    } else {
+      const ss = calcSeries(nS());
+      setWhy('series-power-up', { P: ss.P_bulb.toFixed(2) });
+    }
+
   } else {
     if (!parallelSlots[slot]) return;
     parallelSlots[slot] = false;
-    setWhy(nS() + nP() === 0 ? 'empty' : 'parallel-remove');
+    if (nS() + nP() === 0) {
+      setWhy('empty');
+    } else if (nP() === 0) {
+      setWhy('empty');
+    } else {
+      setWhy('parallel-power-same', { n: nP() });
+    }
   }
+
   refresh();
 }
 
