@@ -123,8 +123,10 @@
 
     /* ─── Puppy ──────────────────────────────────────────────────── */
     .puppy-container {
-      position: relative;
-      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 20px;
     }
 
@@ -132,6 +134,7 @@
       font-size: 110px;
       display: inline-block;
       transition: transform 0.3s ease;
+      line-height: 1;
     }
     .puppy.happy { animation: wiggle 0.5s ease; }
     .puppy.sad   { animation: shakeX 0.5s ease; }
@@ -148,10 +151,6 @@
     }
 
     .speech-bubble {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
       background: #fff9c4;
       padding: 12px 22px;
       border-radius: 18px;
@@ -160,8 +159,9 @@
       font-size: 1rem;
       font-weight: 600;
       color: var(--clr-brown-dark);
-      max-width: 300px;
-      white-space: nowrap;
+      max-width: 320px;
+      text-align: center;
+      position: relative;
     }
     .speech-bubble::after {
       content: '';
