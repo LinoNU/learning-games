@@ -21,7 +21,6 @@
       --radius-card:    18px;
       --radius-badge:   50px;
       --shadow-card:    0 4px 20px rgba(44,44,58,0.10);
-      --shadow-hover:   0 8px 32px rgba(44,44,58,0.18);
       --font-display:   'Fredoka', sans-serif;
       --font-body:      'Nunito', sans-serif;
     }
@@ -48,9 +47,9 @@
     header::after {
       content: '';
       position: absolute;
-      bottom: -20px;
+      bottom: -18px;
       left: 0; right: 0;
-      height: 20px;
+      height: 18px;
       background: var(--clr-header-bg);
       clip-path: ellipse(55% 100% at 50% 0%);
     }
@@ -68,7 +67,7 @@
     .back-link:hover { text-decoration: underline; }
     header h1 {
       font-family: var(--font-display);
-      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-size: clamp(1.2rem, 4vw, 1.7rem);
       font-weight: 700;
       color: var(--clr-header-txt);
       flex: 1;
@@ -76,7 +75,7 @@
 
     /* ── Main ── */
     main {
-      max-width: 860px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 2.5rem 1rem 4rem;
     }
@@ -85,7 +84,7 @@
     .mode-tabs {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       flex-wrap: wrap;
     }
     .mode-tab {
@@ -101,21 +100,70 @@
       min-height: 44px;
       transition: background 0.2s, color 0.2s;
     }
-    .mode-tab.active {
-      background: var(--clr-sci);
-      color: var(--clr-text);
-    }
-    .mode-tab:hover:not(.active) {
+    .mode-tab.active { background: var(--clr-sci); color: var(--clr-text); }
+    .mode-tab:hover:not(.active) { background: var(--clr-sci-soft); }
+
+    /* ── Why Banner (above circuit) ── */
+    .why-banner {
       background: var(--clr-sci-soft);
+      border-left: 5px solid var(--clr-sci);
+      border-radius: 0 var(--radius-card) var(--radius-card) 0;
+      padding: 0.9rem 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--clr-text);
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      box-shadow: var(--shadow-card);
+    }
+    .why-banner .why-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .why-banner.flash { animation: bannerFlash 0.55s ease; }
+    @keyframes bannerFlash {
+      0%   { background: #fff3c4; border-color: #e0a800; }
+      100% { background: var(--clr-sci-soft); border-color: var(--clr-sci); }
+    }
+
+    /* ── Circuit Card ── */
+    .circuit-card {
+      background: var(--clr-surface);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      padding: 1.25rem 1rem;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+    }
+    .circuit-card svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+    .free-divider {
+      border: none;
+      border-top: 2px dashed rgba(78,205,196,0.3);
+      margin: 0.75rem 0;
+    }
+    .circuit-sub-label {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--clr-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.3rem;
+      padding-left: 0.25rem;
     }
 
     /* ── Bulb Tray ── */
-    .section-label {
+    .tray-label {
       font-family: var(--font-display);
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--clr-muted);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
@@ -123,11 +171,11 @@
       background: var(--clr-surface);
       border-radius: var(--radius-card);
       box-shadow: var(--shadow-card);
-      padding: 1rem 1.25rem;
+      padding: 0.9rem 1.25rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      min-height: 80px;
+      gap: 0.65rem;
+      min-height: 72px;
       align-items: center;
       margin-bottom: 1.5rem;
     }
@@ -135,120 +183,90 @@
       background: var(--clr-sci-soft);
       border: 2px solid var(--clr-sci);
       border-radius: 12px;
-      padding: 0.5rem 0.9rem;
-      font-size: 1.4rem;
+      padding: 0.5rem 0.85rem;
+      font-size: 1.35rem;
       cursor: grab;
       user-select: none;
-      min-width: 64px;
-      min-height: 48px;
+      -webkit-user-select: none;
+      touch-action: none;
+      min-width: 60px;
+      min-height: 52px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 1px;
+      gap: 0;
       transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-      -webkit-user-select: none;
-      touch-action: none;
     }
     .bulb-item:active { cursor: grabbing; }
-    .bulb-item .bulb-label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: var(--clr-muted);
-      font-family: var(--font-body);
-    }
+    .bulb-item .b-label { font-size: 0.62rem; font-weight: 700; color: var(--clr-muted); line-height: 1; }
     .bulb-item.selected {
       border-color: #ff9f43;
-      background: #fff9f0;
+      background: #fff8ee;
       box-shadow: 0 0 0 3px rgba(255,159,67,0.35);
     }
-    .bulb-item.dragging {
-      opacity: 0.4;
-    }
-    .tray-empty-hint {
-      color: var(--clr-muted);
-      font-size: 0.9rem;
-      font-style: italic;
-    }
+    .bulb-item.dragging { opacity: 0.35; }
+    .tray-empty-msg { color: var(--clr-muted); font-size: 0.9rem; font-style: italic; }
 
-    /* ── Circuit Canvas Card ── */
-    .circuit-card {
-      background: var(--clr-surface);
-      border-radius: var(--radius-card);
-      box-shadow: var(--shadow-card);
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-      overflow-x: auto;
-    }
-    .circuit-svg-wrap {
-      width: 100%;
-      min-width: 320px;
-    }
-    .circuit-svg-wrap svg {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    /* Drop zone highlighting */
-    .drop-zone-active {
-      filter: drop-shadow(0 0 8px var(--clr-sci));
-    }
-
-    /* ── Stats Panel ── */
+    /* ── Stats Card ── */
     .stats-card {
       background: var(--clr-surface);
       border-radius: var(--radius-card);
       box-shadow: var(--shadow-card);
       padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
     }
     .stats-card h2 {
       font-family: var(--font-display);
       font-size: 1.15rem;
-      font-weight: 600;
-      margin-bottom: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .stats-sections { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .stats-section { flex: 1; min-width: 220px; }
+    .stats-section-title {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 0.65rem;
+      padding: 0.22rem 0.85rem;
+      border-radius: 30px;
+      display: inline-block;
+      background: var(--clr-sci);
       color: var(--clr-text);
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.65rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
     }
     .stat-item {
       background: var(--clr-bg);
       border-radius: 12px;
-      padding: 0.6rem 0.85rem;
+      padding: 0.5rem 0.75rem;
     }
+    .stat-item.power-item {
+      grid-column: 1 / -1;
+      background: #fff8ee;
+      border: 2px solid #f0a020;
+    }
+    .stat-item.empty-item { grid-column: 1 / -1; }
     .stat-label {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       font-weight: 700;
       color: var(--clr-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
     }
     .stat-value {
       font-family: var(--font-display);
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 600;
       color: var(--clr-text);
     }
-    .stat-value.highlight { color: var(--clr-sci); }
-
-    /* ── Why Panel ── */
-    .why-panel {
-      background: linear-gradient(135deg, var(--clr-sci-soft) 0%, #fffbf0 100%);
-      border: 2px solid var(--clr-sci);
-      border-radius: var(--radius-card);
-      padding: 1rem 1.25rem;
-      font-size: 1rem;
-      line-height: 1.6;
-      color: var(--clr-text);
-      min-height: 58px;
-      transition: opacity 0.3s;
-    }
-    .why-panel .why-icon { font-size: 1.3rem; margin-right: 0.4rem; }
+    .stat-value.power { color: #c07000; font-size: 1.25rem; }
+    .stat-value.muted-val { color: var(--clr-muted); font-size: 0.92rem; font-family: var(--font-body); }
+    .stat-formula { font-size: 0.7rem; color: #a06000; font-weight: 600; margin-top: 1px; }
 
     /* ── Footer ── */
     footer {
@@ -263,8 +281,7 @@
 
     /* ── Responsive ── */
     @media (max-width: 480px) {
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .mode-tabs { gap: 0.4rem; }
+      .stats-sections { flex-direction: column; }
       .mode-tab { font-size: 0.88rem; padding: 0.45rem 0.9rem; }
     }
   </style>
@@ -280,30 +297,28 @@
 
   <!-- Mode Tabs -->
   <div class="mode-tabs" role="tablist" aria-label="Circuit mode">
-    <button class="mode-tab active" role="tab" aria-selected="true"  data-mode="series"   aria-controls="circuit-canvas">Series Only</button>
-    <button class="mode-tab"        role="tab" aria-selected="false" data-mode="parallel" aria-controls="circuit-canvas">Parallel Only</button>
-    <button class="mode-tab"        role="tab" aria-selected="false" data-mode="free"     aria-controls="circuit-canvas">Free Explore</button>
+    <button class="mode-tab active" role="tab" aria-selected="true"  data-mode="series">Series Only</button>
+    <button class="mode-tab"        role="tab" aria-selected="false" data-mode="parallel">Parallel Only</button>
+    <button class="mode-tab"        role="tab" aria-selected="false" data-mode="free">Free Explore</button>
   </div>
 
-  <!-- Bulb Tray -->
-  <p class="section-label">Bulb Tray — drag a bulb onto the circuit!</p>
-  <div class="bulb-tray" id="bulb-tray" aria-label="Available light bulbs" role="region"></div>
+  <!-- Why Banner — sits above circuit so it's always in view -->
+  <div class="why-banner" id="why-banner" aria-live="polite" role="status">
+    <span class="why-icon" aria-hidden="true">💡</span>
+    <span id="why-text">Drag a light bulb onto the circuit to get started!</span>
+  </div>
 
   <!-- Circuit Canvas -->
-  <div class="circuit-card">
-    <div class="circuit-svg-wrap" id="circuit-canvas"></div>
-  </div>
+  <div class="circuit-card" id="circuit-canvas" aria-label="Circuit diagram"></div>
+
+  <!-- Bulb Tray -->
+  <p class="tray-label">💡 Bulb Tray — drag a bulb onto the circuit!</p>
+  <div class="bulb-tray" id="bulb-tray" aria-label="Available light bulbs" role="region"></div>
 
   <!-- Stats Panel -->
-  <div class="stats-card" aria-live="polite" aria-label="Circuit stats">
+  <div class="stats-card" id="stats-card" aria-live="polite" aria-label="Circuit statistics">
     <h2>📊 Circuit Stats</h2>
-    <div class="stats-grid" id="stats-grid"></div>
-  </div>
-
-  <!-- Why Panel -->
-  <div class="why-panel" id="why-panel" aria-live="polite">
-    <span class="why-icon">💡</span>
-    <span id="why-text">Drag a light bulb onto the circuit to get started!</span>
+    <div class="stats-sections" id="stats-sections"></div>
   </div>
 
 </main>
@@ -313,404 +328,595 @@
 </footer>
 
 <script>
-// ─── State ───────────────────────────────────────────────────────────────
-const VOLTAGE   = 9;     // V
-const RESISTANCE= 3;     // Ω per bulb
-const MAX_SLOTS = 4;
-const P_REF     = (VOLTAGE * VOLTAGE) / RESISTANCE; // 27W = 100%
+// ─── Constants & State ───────────────────────────────────────────────────
+const VOLTAGE    = 9;          // V
+const RESISTANCE = 3;          // Ω per bulb
+const MAX_SLOTS  = 4;
+const TOTAL_BULBS = 6;
+const P_REF      = VOLTAGE * VOLTAGE / RESISTANCE; // 27W = 100% brightness
 
-let mode         = 'series';   // 'series' | 'parallel' | 'free'
-let seriesSlots  = [];          // array of booleans, length up to MAX_SLOTS
-let parallelSlots= [];
-let totalBulbs   = 6;
-let trayBulbs    = 6;           // bulbs available in tray
-let selectedBulbId = null;      // for tap-to-place
+let mode          = 'series';
+let seriesSlots   = new Array(MAX_SLOTS).fill(false);
+let parallelSlots = new Array(MAX_SLOTS).fill(false);
+let selectedBulb  = null;   // id of tap-selected tray bulb
+let dragActive    = false;
+
+function nS() { return seriesSlots.filter(Boolean).length; }
+function nP() { return parallelSlots.filter(Boolean).length; }
+function available() { return TOTAL_BULBS - nS() - nP(); }
 
 // ─── Physics ─────────────────────────────────────────────────────────────
 function calcSeries(n) {
   if (n === 0) return null;
-  const R = n * RESISTANCE;
-  const I = VOLTAGE / R;
-  const V = I * RESISTANCE;
-  const P = I * I * RESISTANCE;
-  const pct = Math.round((P / P_REF) * 100);
-  return { R, I, V, P, pct };
+  const R_total   = n * RESISTANCE;
+  const I_circuit = VOLTAGE / R_total;
+  const V_bulb    = I_circuit * RESISTANCE;   // = VOLTAGE / n
+  const I_bulb    = I_circuit;
+  const P_bulb    = V_bulb * I_bulb;          // P = V × I
+  const bright    = Math.round(P_bulb / P_REF * 100);
+  return { R_total, I_circuit, V_bulb, I_bulb, P_bulb, bright };
 }
 
 function calcParallel(n) {
   if (n === 0) return null;
-  const R = RESISTANCE / n;
-  const I_total = VOLTAGE / R;
-  const V = VOLTAGE;
-  const P = (V * V) / RESISTANCE; // always 27W
-  const pct = 100;
-  return { R, I_total, V, P, pct };
+  const R_total   = RESISTANCE / n;
+  const I_circuit = VOLTAGE / R_total;        // total battery current
+  const V_bulb    = VOLTAGE;                  // each bulb sees full 9V
+  const I_bulb    = V_bulb / RESISTANCE;      // = 3A always
+  const P_bulb    = V_bulb * I_bulb;          // = 27W always
+  const bright    = 100;
+  return { R_total, I_circuit, V_bulb, I_bulb, P_bulb, bright };
 }
 
-function nSeries()  { return seriesSlots.filter(Boolean).length; }
-function nParallel(){ return parallelSlots.filter(Boolean).length; }
+// ─── SVG Layout Constants ────────────────────────────────────────────────
+const SVG_W      = 760;
+const BAT_X      = 52;          // battery center x
+const RAIL_START = 92;          // x where rails begin (right of battery)
+const RAIL_END   = 712;         // x of right-side closing wire
 
-// ─── Render SVG ──────────────────────────────────────────────────────────
-const SVG_NS = 'http://www.w3.org/2000/svg';
-const SVG_W  = 760;
-const SVG_H  = 320;
+// Slot x positions: evenly spaced across the rail
+const SLOT_STEP  = (RAIL_END - RAIL_START) / (MAX_SLOTS + 1); // ≈ 124
+function slotX(i) { return Math.round(RAIL_START + SLOT_STEP * (i + 1)); }
 
-// Layout constants
-const BAT_X = 60, BAT_Y_TOP = 80, BAT_Y_BOT = 240, BAT_MID = 160;
-const RAIL_START_X = 110;
-const RAIL_END_X   = 700;
-const SERIES_Y     = 100;
-const PARALLEL_Y   = 220;
-const SLOT_SPACING = (RAIL_END_X - RAIL_START_X) / (MAX_SLOTS + 1);
+// Series circuit geometry
+const S_TOP_Y = 95;    // y of top wire (where bulbs sit above)
+const S_BOT_Y = 180;   // y of bottom return wire
+const S_H     = 210;   // SVG viewBox height
 
-function glowFilter(id, color, blur, opacity) {
-  return `<filter id="${id}" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="${blur}" result="blur"/>
-    <feFlood flood-color="${color}" flood-opacity="${opacity}" result="color"/>
-    <feComposite in="color" in2="blur" operator="in" result="glow"/>
-    <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+// Parallel circuit geometry
+const P_TOP_Y = 58;    // y of top rail
+const P_BOT_Y = 182;   // y of bottom rail
+const P_H     = 215;   // SVG viewBox height
+
+// ─── SVG Building Blocks ─────────────────────────────────────────────────
+
+// Battery group: vertical symbol with + terminal connected to topY, − to botY
+function batteryGroup(topY, botY, active) {
+  const midY  = (topY + botY) / 2;
+  const hH    = Math.min(30, (botY - topY) * 0.3);
+  const bT    = midY - hH, bB = midY + hH;
+  const wc    = active ? '#4ecdc4' : '#ccc';
+  const bs    = active ? '#4ecdc4' : '#aaa';
+  return `
+    <!-- battery terminal wires -->
+    <line x1="${BAT_X}" y1="${bT}" x2="${BAT_X}" y2="${topY}"
+      stroke="${wc}" stroke-width="3" stroke-linecap="round"/>
+    <line x1="${BAT_X}" y1="${bB}" x2="${BAT_X}" y2="${botY}"
+      stroke="${wc}" stroke-width="3" stroke-linecap="round"/>
+    <!-- battery body -->
+    <rect x="${BAT_X - 13}" y="${bT}" width="26" height="${bB - bT}"
+      rx="5" fill="#2c2c3a" stroke="${bs}" stroke-width="2"/>
+    <text x="${BAT_X}" y="${midY - 5}" text-anchor="middle"
+      font-family="Fredoka,sans-serif" font-size="12" font-weight="700" fill="#ffd166">9V</text>
+    <text x="${BAT_X}" y="${midY + 9}" text-anchor="middle"
+      font-family="Nunito,sans-serif" font-size="9" fill="#aaa">bat</text>
+    <!-- polarity labels -->
+    <text x="${BAT_X + 16}" y="${topY + 5}" font-size="13"
+      fill="${active ? '#4ecdc4' : '#bbb'}" font-weight="700">+</text>
+    <text x="${BAT_X + 16}" y="${botY + 1}" font-size="13"
+      fill="${active ? '#888' : '#ccc'}" font-weight="700">−</text>`;
+}
+
+// Glow filter definition
+function glowFilter(id, brightness) {
+  const blur = 1.5 + brightness * 0.11;
+  const op   = 0.35 + brightness * 0.006;
+  return `<filter id="${id}" x="-70%" y="-70%" width="240%" height="240%">
+    <feGaussianBlur stdDeviation="${blur}" result="b"/>
+    <feFlood flood-color="#ffd166" flood-opacity="${op}" result="c"/>
+    <feComposite in="c" in2="b" operator="in" result="gw"/>
+    <feMerge><feMergeNode in="gw"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>`;
 }
 
-function bulbSVG(cx, cy, pct, slotId, railType) {
-  // pct: 0–100 brightness
-  const filament = pct > 0
-    ? `hsl(${40 + pct * 0.2}, 100%, ${30 + pct * 0.45}%)`
-    : '#555';
-  const glowColor = '#ffd166';
-  const blur  = pct > 0 ? 2 + pct * 0.12 : 0;
-  const filterId = `gf-${railType}-${slotId}`;
+// Draw a placed bulb.
+// cx, cy = glass circle center
+// actualPW = actual power in watts (used for label — pass from physics, not from bright %)
+// wireConnA/B = the two wire connection points (where the circuit wire meets the bulb leads)
+// labelX/Y = position for the power label
+function drawnBulb(cx, cy, bright, actualPW, slotIdx, rail, wireAx, wireAy, wireBx, wireBy, labelX, labelY) {
+  const R   = 15;
+  const bf  = bright / 100;
+  const fid = `gf-${rail[0]}-${slotIdx}`;
+
+  // Colors
+  const glassAlpha  = 0.15 + bf * 0.72;
+  const glassColor  = bright > 0 ? `rgba(255,248,155,${glassAlpha})` : '#e2e2e2';
+  const glassStroke = bright > 0 ? `hsl(46,90%,${42 + bf * 28}%)` : '#c0c0c0';
+  const filColor    = bright > 0 ? `hsl(36,100%,${16 + bf * 46}%)` : '#888';
+  const baseColor   = bright > 0 ? '#a07010' : '#bbb';
+
+  const powerW = bright > 0 ? actualPW.toFixed(2) + ' W' : '';
+
+  // Leads: from glass-bottom corners to wire connection points
+  // base rect sits just below glass
+  const baseTop = cy + R - 1;
+  const baseBot = cy + R + 6;
+  const lc = cx - 7, rc = cx + 7; // left/right lead x
 
   return `
-    <g class="placed-bulb" data-slot="${slotId}" data-rail="${railType}"
-       style="cursor:pointer; transition: filter 0.4s ease;"
-       aria-label="Placed bulb, click to remove"
-       role="button" tabindex="0">
-      ${pct > 0 ? glowFilter(filterId, glowColor, blur, 0.9) : ''}
-      ${pct > 0 ? `<g filter="url(#${filterId})">` : '<g>'}
-        <!-- bulb glass -->
-        <circle cx="${cx}" cy="${cy - 6}" r="14" fill="${pct > 0 ? 'rgba(255,253,200,0.9)' : '#ddd'}"
-          stroke="${pct > 0 ? '#f0c040' : '#aaa'}" stroke-width="2"/>
-        <!-- filament -->
-        <path d="M${cx-4},${cy+4} Q${cx},${cy-8} ${cx+4},${cy+4}"
-          stroke="${filament}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <!-- base -->
-        <rect x="${cx-6}" y="${cy+7}" width="12" height="6" rx="2"
-          fill="${pct > 0 ? '#c0a020' : '#999'}"/>
-        <!-- lead wires -->
-        <line x1="${cx}" y1="${cy+13}" x2="${cx}" y2="${cy+18}"
-          stroke="#888" stroke-width="2"/>
+    ${bright > 0 ? glowFilter(fid, bright) : ''}
+    <g class="placed-bulb" data-slot="${slotIdx}" data-rail="${rail}"
+       role="button" tabindex="0"
+       aria-label="Placed bulb slot ${slotIdx + 1}, click to remove"
+       style="cursor:pointer">
+      <!-- leads from circuit wire to bulb base -->
+      <line x1="${wireAx}" y1="${wireAy}" x2="${lc}" y2="${baseBot}"
+        stroke="#bbb" stroke-width="2" stroke-linecap="round"/>
+      <line x1="${wireBx}" y1="${wireBy}" x2="${rc}" y2="${baseBot}"
+        stroke="#bbb" stroke-width="2" stroke-linecap="round"/>
+      <!-- glow + bulb body -->
+      <g ${bright > 0 ? `filter="url(#${fid})"` : ''}>
+        <circle cx="${cx}" cy="${cy}" r="${R}"
+          fill="${glassColor}" stroke="${glassStroke}" stroke-width="2"/>
+        <path d="M${cx-5},${cy+7} Q${cx-2},${cy-2} ${cx},${cy-7} Q${cx+2},${cy-2} ${cx+5},${cy+7}"
+          stroke="${filColor}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <rect x="${lc}" y="${baseTop}" width="${rc - lc}" height="7"
+          rx="1" fill="${baseColor}"/>
       </g>
-      <!-- invisible hit target for click/tap -->
-      <rect x="${cx-20}" y="${cy-22}" width="40" height="44" fill="transparent"/>
+      <!-- power label -->
+      ${powerW ? `<text x="${labelX}" y="${labelY}"
+        text-anchor="middle" font-family="Nunito,sans-serif"
+        font-size="11" font-weight="700" fill="#c07000">${powerW}</text>` : ''}
+      <!-- transparent hit target -->
+      <rect x="${Math.min(wireAx, wireBx, cx) - 8}" y="${Math.min(wireAy, wireBy, cy - R) - 4}"
+        width="${Math.max(wireAx, wireBx, cx) - Math.min(wireAx, wireBx, cx) + 24}"
+        height="${Math.max(wireAy, wireBy, cy + R) - Math.min(wireAy, wireBy, cy - R) + 20}"
+        fill="transparent"/>
     </g>`;
 }
 
-function dropZoneSVG(cx, cy, slotId, railType, active) {
+// Drop zone: dashed socket circle with lead stubs
+// cx, cy = socket center; wireAx/y, wireBx/y = wire end points of the two lead stubs
+function dropZone(cx, cy, slotIdx, rail, active, wireAx, wireAy, wireBx, wireBy) {
+  const R   = 15;
+  const col = active ? '#4ecdc4' : '#ccc';
+  const fill = active ? 'rgba(78,205,196,0.1)' : 'rgba(0,0,0,0.03)';
+  const lc  = cx - 7, rc = cx + 7;
+  const baseBot = cy + R + 6;
+
   return `
-    <g class="drop-zone" data-slot="${slotId}" data-rail="${railType}"
-       aria-label="Empty bulb socket ${slotId + 1}, drop here"
-       role="button" tabindex="0">
-      <circle cx="${cx}" cy="${cy}" r="16"
-        fill="${active ? 'rgba(78,205,196,0.15)' : 'rgba(44,44,58,0.05)'}"
-        stroke="${active ? '#4ecdc4' : '#bbb'}"
-        stroke-width="2" stroke-dasharray="4 3"/>
-      <text x="${cx}" y="${cy+5}" text-anchor="middle"
-        font-size="14" fill="${active ? '#4ecdc4' : '#ccc'}">+</text>
-      <!-- invisible hit target -->
-      <rect x="${cx-22}" y="${cy-22}" width="44" height="44" fill="transparent"/>
+    <g class="drop-zone" data-slot="${slotIdx}" data-rail="${rail}"
+       role="button" tabindex="0"
+       aria-label="Empty socket ${slotIdx + 1} on ${rail} circuit, drop a bulb here">
+      <!-- dashed lead stubs -->
+      <line x1="${wireAx}" y1="${wireAy}" x2="${lc}" y2="${baseBot}"
+        stroke="${col}" stroke-width="2" stroke-dasharray="3 2"/>
+      <line x1="${wireBx}" y1="${wireBy}" x2="${rc}" y2="${baseBot}"
+        stroke="${col}" stroke-width="2" stroke-dasharray="3 2"/>
+      <!-- dashed socket -->
+      <circle cx="${cx}" cy="${cy}" r="${R}"
+        fill="${fill}" stroke="${col}" stroke-width="2" stroke-dasharray="4 3"/>
+      <text x="${cx}" y="${cy + 6}" text-anchor="middle"
+        font-size="14" fill="${col}" font-weight="600">+</text>
+      <!-- hit target -->
+      <rect x="${Math.min(wireAx, wireBx, cx) - 8}"
+            y="${Math.min(wireAy, wireBy, cy - R) - 4}"
+            width="${Math.max(wireAx, wireBx, cx) - Math.min(wireAx, wireBx, cx) + 24}"
+            height="${Math.max(wireAy, wireBy, cy + R) - Math.min(wireAy, wireBy, cy - R) + 20}"
+            fill="transparent"/>
     </g>`;
 }
 
-function renderSVG() {
-  const sActive = (mode === 'series'  || mode === 'free');
-  const pActive = (mode === 'parallel'|| mode === 'free');
+// ─── Series Circuit SVG ──────────────────────────────────────────────────
+// One closed rectangular loop:
+//   battery(+) → top wire → [bulbs inline] → right wire → bottom wire → battery(-)
+//
+// Bulbs sit ABOVE the top wire. Each bulb breaks the top wire into segments;
+// the two leads run down from the bulb base to the wire level.
+function buildSeriesSVG(active) {
+  const n    = nS();
+  const stat = calcSeries(n);
+  const pct  = stat ? stat.bright : 0;
+  const pw   = stat ? stat.P_bulb : 0;
+  const wc   = active ? '#4ecdc4' : '#ccc';
 
-  const sStat = calcSeries(nSeries());
-  const pStat = calcParallel(nParallel());
+  // Bulb glass center is 38px above the top wire
+  const BULB_CY = S_TOP_Y - 38;  // = 57
 
-  let html = `<svg id="circuit-svg" viewBox="0 0 ${SVG_W} ${SVG_H}"
-    xmlns="${SVG_NS}" role="img" aria-label="Circuit diagram">
-    <defs>
-      <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-        <path d="M0,0 L6,3 L0,6 Z" fill="#888"/>
-      </marker>
-    </defs>`;
+  let svg = `<svg viewBox="0 0 ${SVG_W} ${S_H}" xmlns="http://www.w3.org/2000/svg"
+    aria-label="Series circuit diagram">
+    <defs></defs>`;
 
-  // ── Battery ──
-  html += `
-    <!-- Battery body -->
-    <rect x="${BAT_X - 18}" y="${BAT_MID - 36}" width="36" height="72"
-      rx="8" fill="#2c2c3a" stroke="#4ecdc4" stroke-width="2"/>
-    <text x="${BAT_X}" y="${BAT_MID - 10}" text-anchor="middle"
-      font-family="Fredoka, sans-serif" font-size="13" font-weight="700" fill="#ffd166">9V</text>
-    <text x="${BAT_X}" y="${BAT_MID + 8}" text-anchor="middle"
-      font-family="Nunito, sans-serif" font-size="10" fill="#aaa">battery</text>
-    <!-- + terminal -->
-    <line x1="${BAT_X}" y1="${BAT_MID - 36}" x2="${BAT_X}" y2="${BAT_Y_TOP}"
-      stroke="#4ecdc4" stroke-width="3"/>
-    <text x="${BAT_X + 8}" y="${BAT_Y_TOP - 4}" font-size="14" fill="#4ecdc4" font-weight="700">+</text>
-    <!-- - terminal -->
-    <line x1="${BAT_X}" y1="${BAT_MID + 36}" x2="${BAT_X}" y2="${BAT_Y_BOT}"
-      stroke="#888" stroke-width="3"/>
-    <text x="${BAT_X + 8}" y="${BAT_Y_BOT + 14}" font-size="14" fill="#888" font-weight="700">−</text>
+  // Battery
+  svg += batteryGroup(S_TOP_Y, S_BOT_Y, active);
 
-    <!-- Top wire from battery to rail start -->
-    <line x1="${BAT_X}" y1="${BAT_Y_TOP}" x2="${RAIL_START_X}" y2="${SERIES_Y}"
-      stroke="${sActive ? '#4ecdc4' : '#ddd'}" stroke-width="3" stroke-linecap="round"/>
-    <!-- Bottom wire from battery to rail start -->
-    <line x1="${BAT_X}" y1="${BAT_Y_BOT}" x2="${RAIL_START_X}" y2="${PARALLEL_Y}"
-      stroke="${pActive ? '#888' : '#ddd'}" stroke-width="3" stroke-linecap="round"/>
-    <!-- Closing vertical wire right side -->
-    <line x1="${RAIL_END_X}" y1="${SERIES_Y}" x2="${RAIL_END_X}" y2="${PARALLEL_Y}"
-      stroke="#aaa" stroke-width="3" stroke-linecap="round"/>`;
+  // Bottom return wire (continuous — the return path)
+  svg += `<line x1="${BAT_X}" y1="${S_BOT_Y}" x2="${RAIL_END}" y2="${S_BOT_Y}"
+    stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
 
-  // ── Series rail ──
-  const sLabel = sActive ? 'Series' : 'Series (inactive)';
-  html += `
-    <!-- Series label -->
-    <text x="${RAIL_START_X}" y="${SERIES_Y - 16}" font-family="Fredoka, sans-serif"
-      font-size="13" font-weight="600" fill="${sActive ? '#2c2c3a' : '#ccc'}">${sLabel}</text>`;
+  // Right closing wire
+  svg += `<line x1="${RAIL_END}" y1="${S_TOP_Y}" x2="${RAIL_END}" y2="${S_BOT_Y}"
+    stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
 
-  // Draw rail wire and slots for series
-  let prevX = RAIL_START_X;
+  // Top wire with per-slot gaps where bulb leads connect
+  // Lead connection points on the wire: (cx-7, S_TOP_Y) and (cx+7, S_TOP_Y)
+  let prevX = RAIL_START;
   for (let i = 0; i < MAX_SLOTS; i++) {
-    const cx = RAIL_START_X + (i + 1) * SLOT_SPACING;
-    // wire segment before slot
-    html += `<line x1="${prevX}" y1="${SERIES_Y}" x2="${cx - 20}" y2="${SERIES_Y}"
-      stroke="${sActive ? '#4ecdc4' : '#ddd'}" stroke-width="3" stroke-linecap="round"/>`;
+    const cx  = slotX(i);
+    const lc  = cx - 7;   // left lead touches wire here
+    const rc  = cx + 7;   // right lead touches wire here
 
-    const occupied = seriesSlots[i];
-    if (occupied && sActive) {
-      const sPct = sStat ? sStat.pct : 0;
-      html += bulbSVG(cx, SERIES_Y, sPct, i, 'series');
-      // draw wire through bulb base
-      html += `<line x1="${cx}" y1="${SERIES_Y + 18}" x2="${cx}" y2="${SERIES_Y}"
-        stroke="${sActive ? '#4ecdc4' : '#ddd'}" stroke-width="2" opacity="0"/>`;
-    } else if (sActive) {
-      html += dropZoneSVG(cx, SERIES_Y, i, 'series', true);
+    // Wire segment up to left lead contact
+    svg += `<line x1="${prevX}" y1="${S_TOP_Y}" x2="${lc}" y2="${S_TOP_Y}"
+      stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
+
+    if (seriesSlots[i] && active) {
+      // Teal wire leads from the gap up to the bulb base
+      // (these are part of the circuit path — teal colored)
+      const baseBot = BULB_CY + 15 + 6; // glass bottom + base height
+      svg += `<line x1="${lc}" y1="${S_TOP_Y}" x2="${lc}" y2="${baseBot}"
+        stroke="${wc}" stroke-width="2.5" stroke-linecap="round"/>`;
+      svg += `<line x1="${rc}" y1="${S_TOP_Y}" x2="${rc}" y2="${baseBot}"
+        stroke="${wc}" stroke-width="2.5" stroke-linecap="round"/>`;
+      // Bulb: wire contacts at bottom of leads (lc/rc, baseBot)
+      // leads inside drawnBulb are cosmetic only (draw as gray from wire point to base)
+      svg += drawnBulb(
+        cx, BULB_CY, pct, pw, i, 'series',
+        lc, S_TOP_Y,   // wire contact A
+        rc, S_TOP_Y,   // wire contact B
+        cx, S_TOP_Y + 14  // power label position (below wire)
+      );
     } else {
-      html += dropZoneSVG(cx, SERIES_Y, i, 'series', false);
+      svg += dropZone(
+        cx, BULB_CY, i, 'series', active,
+        lc, S_TOP_Y,
+        rc, S_TOP_Y
+      );
     }
-    prevX = cx + 20;
+    prevX = rc;
   }
-  html += `<line x1="${prevX}" y1="${SERIES_Y}" x2="${RAIL_END_X}" y2="${SERIES_Y}"
-    stroke="${sActive ? '#4ecdc4' : '#ddd'}" stroke-width="3" stroke-linecap="round"/>`;
+  // Final top wire segment to closing wire
+  svg += `<line x1="${prevX}" y1="${S_TOP_Y}" x2="${RAIL_END}" y2="${S_TOP_Y}"
+    stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
 
-  // ── Parallel rail ──
-  const pLabel = pActive ? 'Parallel' : 'Parallel (inactive)';
-  html += `
-    <!-- Parallel label -->
-    <text x="${RAIL_START_X}" y="${PARALLEL_Y + 30}" font-family="Fredoka, sans-serif"
-      font-size="13" font-weight="600" fill="${pActive ? '#2c2c3a' : '#ccc'}">${pLabel}</text>`;
-
-  // For parallel, each slot connects directly from top rail to bottom rail
-  // We draw a horizontal "common" rail and drop down for each bulb
-  // Actually in parallel, all bulbs share same top/bottom wire
-  // Simplify: draw top wire across, draw bulbs dropping down to bottom wire
-  const PAR_TOP_Y = PARALLEL_Y - 30;
-  const PAR_BOT_Y = PARALLEL_Y + 30; // not used visually, just return wire
-  html += `<line x1="${RAIL_START_X}" y1="${PARALLEL_Y}" x2="${RAIL_END_X}" y2="${PARALLEL_Y}"
-    stroke="${pActive ? '#888' : '#ddd'}" stroke-width="3" stroke-linecap="round"/>`;
-
-  for (let i = 0; i < MAX_SLOTS; i++) {
-    const cx = RAIL_START_X + (i + 1) * SLOT_SPACING;
-    const occupied = parallelSlots[i];
-    if (occupied && pActive) {
-      const pPct = pStat ? pStat.pct : 0;
-      html += bulbSVG(cx, PARALLEL_Y, pPct, i, 'parallel');
-    } else if (pActive) {
-      html += dropZoneSVG(cx, PARALLEL_Y, i, 'parallel', true);
-    } else {
-      html += dropZoneSVG(cx, PARALLEL_Y, i, 'parallel', false);
-    }
-  }
-
-  html += `</svg>`;
-
-  document.getElementById('circuit-canvas').innerHTML = html;
-  attachSVGEvents();
+  svg += `</svg>`;
+  return svg;
 }
 
-// ─── Stats ────────────────────────────────────────────────────────────────
-function fmt(v, dec=2) {
-  return v === null ? '—' : v.toFixed(dec);
+// ─── Parallel Circuit SVG ────────────────────────────────────────────────
+// Classic ladder topology:
+//   Two continuous horizontal rails (top & bottom).
+//   Battery on left bridges the two rails.
+//   Each bulb is a vertical branch ("rung") connecting top rail to bottom rail.
+//   Right side: closing wire connects the two rails.
+//
+// A single bulb in any branch gets the full 9V — independent of other branches.
+function buildParallelSVG(active) {
+  const n    = nP();
+  const stat = calcParallel(n);
+  const pct  = stat ? 100 : 0;
+  const wc   = active ? '#4ecdc4' : '#ccc';
+
+  // Bulb glass center is midway between the two rails
+  const BULB_CY = Math.round((P_TOP_Y + P_BOT_Y) / 2);  // = 120
+
+  let svg = `<svg viewBox="0 0 ${SVG_W} ${P_H}" xmlns="http://www.w3.org/2000/svg"
+    aria-label="Parallel circuit diagram">
+    <defs></defs>`;
+
+  // Battery (bridges top and bottom rails on the left)
+  svg += batteryGroup(P_TOP_Y, P_BOT_Y, active);
+
+  // Top rail (continuous positive bus)
+  svg += `<line x1="${RAIL_START}" y1="${P_TOP_Y}" x2="${RAIL_END}" y2="${P_TOP_Y}"
+    stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
+
+  // Bottom rail (continuous negative/return bus)
+  svg += `<line x1="${RAIL_START}" y1="${P_BOT_Y}" x2="${RAIL_END}" y2="${P_BOT_Y}"
+    stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
+
+  // Right closing wire
+  svg += `<line x1="${RAIL_END}" y1="${P_TOP_Y}" x2="${RAIL_END}" y2="${P_BOT_Y}"
+    stroke="${wc}" stroke-width="3" stroke-linecap="round"/>`;
+
+  // Bulb branches (vertical rungs of the ladder)
+  // Each bulb connects from top rail (cx, P_TOP_Y) down to bottom rail (cx, P_BOT_Y)
+  // Lead connection points: (cx, P_TOP_Y) at top, (cx, P_BOT_Y) at bottom
+  for (let i = 0; i < MAX_SLOTS; i++) {
+    const cx      = slotX(i);
+    const baseBot = BULB_CY + 15 + 6; // glass bottom + base
+
+    if (parallelSlots[i] && active) {
+      // Teal wire leads from rails to bulb
+      svg += `<line x1="${cx}" y1="${P_TOP_Y}" x2="${cx}" y2="${BULB_CY - 15}"
+        stroke="${wc}" stroke-width="2.5" stroke-linecap="round"/>`;
+      svg += `<line x1="${cx}" y1="${baseBot}" x2="${cx}" y2="${P_BOT_Y}"
+        stroke="${wc}" stroke-width="2.5" stroke-linecap="round"/>`;
+      // Power label: to the right of bulb, at mid-height
+      svg += drawnBulb(
+        cx, BULB_CY, 100, P_REF, i, 'parallel',
+        cx, P_TOP_Y,         // top wire contact
+        cx, P_BOT_Y,         // bottom wire contact
+        cx + 26, BULB_CY + 5  // power label position (right of bulb)
+      );
+    } else {
+      // Dashed drop zone spanning rail-to-rail
+      svg += dropZone(
+        cx, BULB_CY, i, 'parallel', active,
+        cx, P_TOP_Y,
+        cx, P_BOT_Y
+      );
+    }
+  }
+
+  svg += `</svg>`;
+  return svg;
 }
+
+// ─── Render Circuit ───────────────────────────────────────────────────────
+function renderCircuit() {
+  const canvas = document.getElementById('circuit-canvas');
+
+  if (mode === 'series') {
+    canvas.innerHTML = buildSeriesSVG(true);
+  } else if (mode === 'parallel') {
+    canvas.innerHTML = buildParallelSVG(true);
+  } else {
+    // Free Explore: both circuits stacked
+    canvas.innerHTML = `
+      <div class="circuit-sub-label">Series Circuit — one path for current</div>
+      ${buildSeriesSVG(true)}
+      <hr class="free-divider"/>
+      <div class="circuit-sub-label">Parallel Circuit — each bulb has its own path</div>
+      ${buildParallelSVG(true)}`;
+  }
+
+  attachCircuitEvents();
+}
+
+// ─── Render Stats ─────────────────────────────────────────────────────────
+function f(v, d = 2) { return v.toFixed(d); }
 
 function renderStats() {
-  const ns = nSeries(), np = nParallel();
-  const ss = calcSeries(ns);
-  const ps = calcParallel(np);
+  const sections = document.getElementById('stats-sections');
+  const showS = (mode === 'series'   || mode === 'free');
+  const showP = (mode === 'parallel' || mode === 'free');
+  let html = '';
 
-  const R_total = (ss ? ss.R : 0) + (ps ? ps.R : 0);
+  if (showS) {
+    const ss = calcSeries(nS());
+    html += `<div class="stats-section">
+      <div class="stats-section-title">Series</div>
+      <div class="stats-grid">`;
+    if (!ss) {
+      html += `<div class="stat-item empty-item">
+        <div class="stat-value muted-val">No bulbs placed yet</div></div>`;
+    } else {
+      html += `
+        <div class="stat-item">
+          <div class="stat-label">Bulbs</div>
+          <div class="stat-value">${nS()}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Total Resistance</div>
+          <div class="stat-value">${ss.R_total} Ω</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Circuit Current</div>
+          <div class="stat-value">${f(ss.I_circuit)} A</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Voltage / bulb</div>
+          <div class="stat-value">${f(ss.V_bulb)} V</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Current / bulb</div>
+          <div class="stat-value">${f(ss.I_bulb)} A</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Brightness</div>
+          <div class="stat-value">${ss.bright}%</div>
+        </div>
+        <div class="stat-item power-item">
+          <div class="stat-label">⚡ Power per bulb — P = V × I</div>
+          <div class="stat-value power">${f(ss.P_bulb)} W</div>
+          <div class="stat-formula">${f(ss.V_bulb)} V × ${f(ss.I_bulb)} A = ${f(ss.P_bulb)} W</div>
+        </div>`;
+    }
+    html += `</div></div>`;
+  }
 
-  const stats = [
-    { label: 'Series bulbs',      value: ns === 0 ? '—' : `${ns}` },
-    { label: 'Parallel bulbs',    value: np === 0 ? '—' : `${np}` },
-    { label: 'Series resistance', value: ss ? `${ss.R} Ω` : '— Ω' },
-    { label: 'Series current',    value: ss ? `${fmt(ss.I)} A` : '— A' },
-    { label: 'Series V/bulb',     value: ss ? `${fmt(ss.V)} V` : '— V' },
-    { label: 'Series brightness', value: ss ? `${ss.pct}%` : '—',     highlight: !!ss },
-    { label: 'Parallel V/bulb',   value: ps ? `9.00 V` : '— V' },
-    { label: 'Parallel brightness', value: ps ? `100%` : '—',          highlight: !!ps },
-  ];
+  if (showP) {
+    const ps = calcParallel(nP());
+    html += `<div class="stats-section">
+      <div class="stats-section-title">Parallel</div>
+      <div class="stats-grid">`;
+    if (!ps) {
+      html += `<div class="stat-item empty-item">
+        <div class="stat-value muted-val">No bulbs placed yet</div></div>`;
+    } else {
+      html += `
+        <div class="stat-item">
+          <div class="stat-label">Bulbs</div>
+          <div class="stat-value">${nP()}</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Total Resistance</div>
+          <div class="stat-value">${f(ps.R_total)} Ω</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Circuit Current</div>
+          <div class="stat-value">${f(ps.I_circuit)} A</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Voltage / bulb</div>
+          <div class="stat-value">9.00 V</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Current / bulb</div>
+          <div class="stat-value">3.00 A</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Brightness</div>
+          <div class="stat-value">100%</div>
+        </div>
+        <div class="stat-item power-item">
+          <div class="stat-label">⚡ Power per bulb — P = V × I</div>
+          <div class="stat-value power">27.00 W</div>
+          <div class="stat-formula">9.00 V × 3.00 A = 27.00 W</div>
+        </div>`;
+    }
+    html += `</div></div>`;
+  }
 
-  const grid = document.getElementById('stats-grid');
-  grid.innerHTML = stats.map(s => `
-    <div class="stat-item">
-      <div class="stat-label">${s.label}</div>
-      <div class="stat-value${s.highlight ? ' highlight' : ''}">${s.value}</div>
-    </div>`).join('');
+  sections.innerHTML = html;
 }
 
-// ─── Why Panel ────────────────────────────────────────────────────────────
-function updateWhy(event) {
-  const el = document.getElementById('why-text');
-  const messages = {
-    'series-add':    "You added a bulb in series! Now the current has to push through more resistance, so it slows down — and every bulb gets dimmer.",
-    'series-remove': "You removed a series bulb. Less resistance means more current flows — the remaining bulbs get brighter!",
-    'parallel-add':  "You added a bulb in parallel! Each bulb now has its own path to the battery, so they all get the full 9V — brightness stays the same!",
-    'parallel-remove': "You removed a parallel bulb. The other bulbs still have their own paths to the battery, so their brightness doesn't change.",
-    'none':          "Drag a light bulb onto the circuit to get started!",
-  };
-  el.textContent = messages[event] || messages['none'];
-}
-
-// ─── Tray ─────────────────────────────────────────────────────────────────
+// ─── Render Tray ──────────────────────────────────────────────────────────
 function renderTray() {
   const tray = document.getElementById('bulb-tray');
-  const placed = nSeries() + nParallel();
-  const available = totalBulbs - placed;
+  const avail = available();
 
-  if (available === 0) {
-    tray.innerHTML = '<span class="tray-empty-hint">No bulbs left — remove one from the circuit to get it back!</span>';
+  if (avail <= 0) {
+    tray.innerHTML = '<span class="tray-empty-msg">All bulbs are placed! Click a bulb in the circuit to remove it.</span>';
     return;
   }
 
   tray.innerHTML = '';
-  for (let i = 0; i < available; i++) {
-    const div = document.createElement('div');
-    div.className = 'bulb-item';
-    div.draggable = true;
-    div.id = `tray-bulb-${i}`;
-    div.setAttribute('aria-label', '3 Ohm light bulb, drag to place');
-    div.setAttribute('role', 'button');
-    div.setAttribute('tabindex', '0');
-    div.innerHTML = `<span>💡</span><span class="bulb-label">3Ω</span>`;
-
-    // Desktop drag
-    div.addEventListener('dragstart', onBulbDragStart);
-
-    // Touch / tap selection
-    div.addEventListener('click', onBulbClick);
-    div.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') onBulbClick.call(div, e); });
-
-    tray.appendChild(div);
+  for (let i = 0; i < avail; i++) {
+    const el = document.createElement('div');
+    el.className = 'bulb-item';
+    el.draggable = true;
+    el.id = `tb-${i}`;
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', '3 ohm light bulb — drag or tap to place in circuit');
+    el.innerHTML = `<span>💡</span><span class="b-label">3Ω</span>`;
+    el.addEventListener('dragstart', onDragStart);
+    el.addEventListener('click', onTapBulb);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') onTapBulb.call(el, e); });
+    tray.appendChild(el);
   }
+}
+
+// ─── Why Banner ───────────────────────────────────────────────────────────
+const MSGS = {
+  'series-first':    "Great start! Watch the Power per bulb (P = V × I) — that's what tells you how bright each bulb will be.",
+  'series-add':      "You added a bulb in series! The current has to push through more resistance, so it slows down — and every bulb gets dimmer.",
+  'series-remove':   "You removed a series bulb! Less resistance means more current flows — the remaining bulbs get brighter.",
+  'parallel-first':  "Great start! Watch the Power per bulb (P = V × I) — that's what tells you how bright each bulb will be.",
+  'parallel-add':    "You added a bulb in parallel! Each bulb has its own path to the battery, so they all get the full 9V — brightness stays the same!",
+  'parallel-remove': "You removed a parallel bulb. The other bulbs still have their own paths to the battery, so their brightness doesn't change.",
+  'empty':           "The circuit is empty. Drag a bulb onto the circuit to see what happens!",
+  'default':         "Drag a light bulb onto the circuit to get started!",
+};
+
+function setWhy(key) {
+  document.getElementById('why-text').textContent = MSGS[key] || MSGS.default;
+  const banner = document.getElementById('why-banner');
+  banner.classList.remove('flash');
+  void banner.offsetWidth; // force reflow to restart animation
+  banner.classList.add('flash');
 }
 
 // ─── Drag & Drop ──────────────────────────────────────────────────────────
-let dragBulbActive = false;
-
-function onBulbDragStart(e) {
-  dragBulbActive = true;
+function onDragStart(e) {
+  dragActive = true;
   e.dataTransfer.setData('text/plain', 'bulb');
   this.classList.add('dragging');
-  clearSelection();
+  clearTapSel();
 }
 
-function attachSVGEvents() {
-  const svg = document.getElementById('circuit-svg');
-  if (!svg) return;
+document.addEventListener('dragend', () => {
+  dragActive = false;
+  document.querySelectorAll('.bulb-item.dragging').forEach(el => el.classList.remove('dragging'));
+});
 
-  // Drop zones — desktop
-  svg.querySelectorAll('.drop-zone').forEach(zone => {
+function attachCircuitEvents() {
+  const root = document.getElementById('circuit-canvas');
+  if (!root) return;
+
+  root.querySelectorAll('.drop-zone').forEach(zone => {
+    // Desktop drag
     zone.addEventListener('dragover', e => {
       e.preventDefault();
-      zone.classList.add('drop-zone-active');
+      zone.style.filter = 'drop-shadow(0 0 8px rgba(78,205,196,0.9))';
     });
-    zone.addEventListener('dragleave', () => zone.classList.remove('drop-zone-active'));
+    zone.addEventListener('dragleave', () => { zone.style.filter = ''; });
     zone.addEventListener('drop', e => {
       e.preventDefault();
-      zone.classList.remove('drop-zone-active');
-      if (!dragBulbActive) return;
-      dragBulbActive = false;
+      zone.style.filter = '';
+      if (!dragActive) return;
+      dragActive = false;
+      document.querySelectorAll('.bulb-item.dragging').forEach(el => el.classList.remove('dragging'));
       placeBulb(+zone.dataset.slot, zone.dataset.rail);
-      removeDraggingClass();
     });
-    // Tap-to-place
+    // Touch tap-to-place
     zone.addEventListener('click', () => {
-      if (selectedBulbId !== null) {
+      if (selectedBulb !== null) {
         placeBulb(+zone.dataset.slot, zone.dataset.rail);
-        clearSelection();
+        clearTapSel();
       }
     });
     zone.addEventListener('keydown', e => {
-      if ((e.key === 'Enter' || e.key === ' ') && selectedBulbId !== null) {
+      if ((e.key === 'Enter' || e.key === ' ') && selectedBulb !== null) {
         placeBulb(+zone.dataset.slot, zone.dataset.rail);
-        clearSelection();
+        clearTapSel();
       }
     });
   });
 
-  // Placed bulbs — click to remove
-  svg.querySelectorAll('.placed-bulb').forEach(bulb => {
+  root.querySelectorAll('.placed-bulb').forEach(bulb => {
     const slot = +bulb.dataset.slot;
     const rail = bulb.dataset.rail;
     bulb.addEventListener('click', () => removeBulb(slot, rail));
-    bulb.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') removeBulb(slot, rail);
-    });
+    bulb.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') removeBulb(slot, rail); });
   });
 }
 
-function removeDraggingClass() {
-  document.querySelectorAll('.bulb-item.dragging').forEach(el => el.classList.remove('dragging'));
-}
-
-// ─── Tap selection ────────────────────────────────────────────────────────
-function onBulbClick(e) {
+// ─── Tap-to-place ─────────────────────────────────────────────────────────
+function onTapBulb(e) {
   e.stopPropagation();
-  const id = this.id || e.currentTarget.id;
-  if (selectedBulbId === id) {
-    clearSelection();
-  } else {
-    clearSelection();
-    selectedBulbId = id;
-    const el = document.getElementById(id);
-    if (el) el.classList.add('selected');
-  }
+  const id = e.currentTarget.id;
+  if (selectedBulb === id) { clearTapSel(); return; }
+  clearTapSel();
+  selectedBulb = id;
+  document.getElementById(id)?.classList.add('selected');
 }
 
-function clearSelection() {
-  selectedBulbId = null;
+function clearTapSel() {
+  selectedBulb = null;
   document.querySelectorAll('.bulb-item.selected').forEach(el => el.classList.remove('selected'));
 }
 
-// Clear selection when clicking elsewhere
 document.addEventListener('click', e => {
-  if (!e.target.closest('.bulb-item') && !e.target.closest('.drop-zone')) {
-    clearSelection();
-  }
+  if (!e.target.closest('.bulb-item') && !e.target.closest('.drop-zone')) clearTapSel();
 });
 
 // ─── Place / Remove ───────────────────────────────────────────────────────
 function placeBulb(slot, rail) {
-  const placed = nSeries() + nParallel();
-  if (placed >= totalBulbs) return;
-
-  // Rail active check
-  if (rail === 'series'   && mode === 'parallel') return;
-  if (rail === 'parallel' && mode === 'series')   return;
-
+  if (available() <= 0) return;
   if (rail === 'series') {
+    if (mode === 'parallel') return;
     if (seriesSlots[slot]) return;
     seriesSlots[slot] = true;
-    updateWhy('series-add');
+    setWhy(nS() === 1 ? 'series-first' : 'series-add');
   } else {
+    if (mode === 'series') return;
     if (parallelSlots[slot]) return;
     parallelSlots[slot] = true;
-    updateWhy('parallel-add');
+    setWhy(nP() === 1 ? 'parallel-first' : 'parallel-add');
   }
   refresh();
 }
@@ -719,21 +925,13 @@ function removeBulb(slot, rail) {
   if (rail === 'series') {
     if (!seriesSlots[slot]) return;
     seriesSlots[slot] = false;
-    updateWhy(nSeries() > 0 ? 'series-remove' : 'none');
+    setWhy(nS() + nP() === 0 ? 'empty' : 'series-remove');
   } else {
     if (!parallelSlots[slot]) return;
     parallelSlots[slot] = false;
-    updateWhy(nParallel() > 0 ? 'parallel-remove' : 'none');
+    setWhy(nS() + nP() === 0 ? 'empty' : 'parallel-remove');
   }
-  if (nSeries() + nParallel() === 0) updateWhy('none');
   refresh();
-}
-
-// ─── Refresh all UI ───────────────────────────────────────────────────────
-function refresh() {
-  renderSVG();
-  renderStats();
-  renderTray();
 }
 
 // ─── Mode Tabs ────────────────────────────────────────────────────────────
@@ -746,26 +944,22 @@ document.querySelectorAll('.mode-tab').forEach(tab => {
     tab.classList.add('active');
     tab.setAttribute('aria-selected', 'true');
     mode = tab.dataset.mode;
-    resetCircuit();
+    seriesSlots.fill(false);
+    parallelSlots.fill(false);
+    clearTapSel();
+    setWhy('default');
+    refresh();
   });
 });
 
-function resetCircuit() {
-  seriesSlots  = [];
-  parallelSlots= [];
-  clearSelection();
-  updateWhy('none');
-  refresh();
+// ─── Refresh & Init ───────────────────────────────────────────────────────
+function refresh() {
+  renderCircuit();
+  renderStats();
+  renderTray();
 }
 
-// ─── Drag cancel ─────────────────────────────────────────────────────────
-document.addEventListener('dragend', () => {
-  dragBulbActive = false;
-  removeDraggingClass();
-});
-
-// ─── Init ─────────────────────────────────────────────────────────────────
-updateWhy('none');
+setWhy('default');
 refresh();
 </script>
 </body>
