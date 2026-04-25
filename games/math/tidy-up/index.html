@@ -506,6 +506,67 @@
       .parent-mood-header { order: -1; width: 100%; text-align: center; }
       .diff-btn { padding: 7px 13px; font-size: 13px; }
     }
+
+    /* ─── On-screen Number Pad (touch devices only) ──────────────── */
+    .numpad {
+      display: none;
+      background: linear-gradient(to right, #c8f7d0, #b0edb9);
+      border: 3px solid var(--clr-pink);
+      border-top: none;
+      border-radius: 0 0 15px 15px;
+      padding: 8px 12px 12px;
+      width: 100%;
+    }
+    .numpad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .np-btn {
+      padding: 12px 6px;
+      font-size: 22px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      background: white;
+      border: 2px solid var(--clr-pink);
+      border-radius: 10px;
+      color: var(--clr-purple-dark);
+      cursor: pointer;
+      box-shadow: 0 3px 0 #d8a0b8;
+      touch-action: manipulation;
+      transition: transform 0.08s, box-shadow 0.08s;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .np-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #d8a0b8; }
+    .np-back {
+      background: #fff3cd; border-color: #ffa500;
+      box-shadow: 0 3px 0 #c07800; color: #7a4200;
+    }
+    .np-back:active { box-shadow: 0 1px 0 #c07800; }
+    .np-submit {
+      background: linear-gradient(to bottom, var(--clr-green), var(--clr-green-dark));
+      border-color: var(--clr-green-dark);
+      box-shadow: 0 3px 0 #1a6040; color: white;
+    }
+    .np-submit:active { box-shadow: 0 1px 0 #1a6040; }
+
+    /* On touch devices: show numpad, hide OS-keyboard trigger */
+    @media (pointer: coarse) {
+      main { align-items: flex-start; padding: 0.25rem 0.5rem 0.5rem; }
+      .numpad { display: block; }
+      .tidy-btn { display: none; }
+      /* Remove bottom radius from input-area; numpad provides it */
+      .input-area { border-radius: 0; border-bottom: none; }
+    }
+
+    /* Compact numpad on short phones */
+    @media (pointer: coarse) and (max-height: 620px) {
+      .np-btn { padding: 9px 4px; font-size: 18px; }
+      .numpad-grid { gap: 5px; }
+      .numpad { padding: 6px 10px 10px; }
+      .game-header { padding: 6px 10px; }
+    }
   </style>
 </head>
 <body>
@@ -539,6 +600,24 @@
         <div class="current-problem" id="currentProblem">--</div>
         <input type="number" id="answerInput" placeholder="?" autocomplete="off" inputmode="numeric" pattern="[0-9]*" aria-label="Your answer" />
         <button class="tidy-btn" id="fireBtn">TIDY UP! 🧹</button>
+      </div>
+
+      <!-- Number Pad (touch devices only) -->
+      <div class="numpad" id="numpad" aria-label="Number pad">
+        <div class="numpad-grid">
+          <button class="np-btn" data-val="1">1</button>
+          <button class="np-btn" data-val="2">2</button>
+          <button class="np-btn" data-val="3">3</button>
+          <button class="np-btn" data-val="4">4</button>
+          <button class="np-btn" data-val="5">5</button>
+          <button class="np-btn" data-val="6">6</button>
+          <button class="np-btn" data-val="7">7</button>
+          <button class="np-btn" data-val="8">8</button>
+          <button class="np-btn" data-val="9">9</button>
+          <button class="np-btn np-back" data-val="back" aria-label="Backspace">⌫</button>
+          <button class="np-btn" data-val="0">0</button>
+          <button class="np-btn np-submit" data-val="submit" aria-label="Submit answer">✓</button>
+        </div>
       </div>
 
       <!-- ── Start Overlay ──────────────────────────────────── -->
@@ -703,6 +782,7 @@
       itemsTidiedThisLevel: 0, itemsPerLevel: 8
     };
     const basket = { x: 300, y: 370, width: 80, height: 50 };
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
     let spawnTimer = null, gameLoop = null;
 
     // ═══════════════════════════════════════════════════════════════
@@ -724,6 +804,25 @@
       document.getElementById('answerInput').addEventListener('keypress', e => {
         if (e.key === 'Enter') handleTidy();
       });
+
+      if (isTouchDevice) {
+        const input = document.getElementById('answerInput');
+        input.readOnly = true;
+        input.style.caretColor = 'transparent';
+        document.querySelectorAll('.np-btn').forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.preventDefault();
+            const val = btn.dataset.val;
+            if (val === 'back') {
+              input.value = input.value.slice(0, -1);
+            } else if (val === 'submit') {
+              handleTidy();
+            } else if (input.value.length < 4) {
+              input.value += val;
+            }
+          });
+        });
+      }
       document.getElementById('saveScoreBtn').addEventListener('click', saveScore);
       document.getElementById('playerNameInput').addEventListener('keypress', e => {
         if (e.key === 'Enter') saveScore();
@@ -758,7 +857,7 @@
       spawnItem();
       startSpawnTimer();
       gameLoop = requestAnimationFrame(update);
-      document.getElementById('answerInput').focus();
+      if (!isTouchDevice) document.getElementById('answerInput').focus();
     }
 
     function restartGame() {
@@ -776,7 +875,7 @@
       spawnItem();
       startSpawnTimer();
       gameLoop = requestAnimationFrame(update);
-      document.getElementById('answerInput').focus();
+      if (!isTouchDevice) document.getElementById('answerInput').focus();
     }
 
     function gameOver() {
@@ -923,7 +1022,7 @@
       const input  = document.getElementById('answerInput');
       const answer = parseInt(input.value, 10);
       input.value  = '';
-      input.focus();
+      if (!isTouchDevice) input.focus();
       if (isNaN(answer)) return;
 
       if (answer === 67) showSixSeven();
