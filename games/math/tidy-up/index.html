@@ -134,6 +134,9 @@
     /* ─── Canvas ─────────────────────────────────────────────────── */
     #gameCanvas {
       display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 600 / 400;
       background: linear-gradient(to bottom, #fff8dc, #ffefd5);
       border-left: 3px solid var(--clr-pink);
       border-right: 3px solid var(--clr-pink);
@@ -465,9 +468,43 @@
     /* ─── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 620px) {
       .game-container { width: 100%; }
-      .current-problem { font-size: 20px; min-width: 90px; }
-      #answerInput { font-size: 18px; }
+
+      .site-header h1 { font-size: 1rem; }
+      .back-link { font-size: 0.85rem; }
+
+      .game-header { padding: 8px 10px; }
+      .score-display, .lives-display { font-size: 14px; min-width: 70px; }
+      .parent-mood-header { font-size: 11px; padding: 4px 8px; }
+
+      /* Stack problem label above input + button */
+      .input-area { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+      .current-problem {
+        font-size: 20px; min-width: 100%;
+        text-align: center; margin-bottom: 0;
+      }
+      #answerInput { font-size: 18px; flex: 1; min-width: 0; }
       .tidy-btn { font-size: 14px; padding: 10px 14px; }
+
+      /* Overlays */
+      .overlay { padding: 16px 14px; }
+      .game-title { font-size: 26px; }
+      .game-subtitle { font-size: 14px; margin-bottom: 14px; }
+      .instructions { font-size: 12px; margin-top: 12px; }
+      .menu-btn { font-size: 16px; padding: 10px 22px; }
+      .gen-alpha-message { font-size: 15px; }
+      .final-score { font-size: 22px; }
+      .leaderboard { min-width: 0; width: 100%; }
+      .leaderboard-entry { font-size: 13px; }
+      #playerNameInput { width: 120px; }
+
+      .combo-display { font-size: 14px; top: 50px; right: 10px; }
+    }
+
+    @media (max-width: 380px) {
+      .site-header h1 { font-size: 0.85rem; }
+      .game-header { flex-wrap: wrap; gap: 4px; justify-content: center; }
+      .parent-mood-header { order: -1; width: 100%; text-align: center; }
+      .diff-btn { padding: 7px 13px; font-size: 13px; }
     }
   </style>
 </head>
@@ -500,7 +537,7 @@
       <!-- Input Area -->
       <div class="input-area">
         <div class="current-problem" id="currentProblem">--</div>
-        <input type="number" id="answerInput" placeholder="?" autocomplete="off" aria-label="Your answer" />
+        <input type="number" id="answerInput" placeholder="?" autocomplete="off" inputmode="numeric" pattern="[0-9]*" aria-label="Your answer" />
         <button class="tidy-btn" id="fireBtn">TIDY UP! 🧹</button>
       </div>
 
