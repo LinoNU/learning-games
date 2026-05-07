@@ -294,6 +294,18 @@
 
     footer a { color: var(--clr-muted); }
 
+    /* ── Win screen ── */
+    @keyframes winEntrance {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes trophyBounce {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    #screen-win { animation: winEntrance 0.45s ease-out; }
+    #win-heading { animation: trophyBounce 1.2s ease-in-out infinite; }
+
     /* ── Shake animation ── */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
@@ -378,6 +390,14 @@
     <button class="btn-primary" id="btn-start">Start Game</button>
   </div>
 
+  <!-- Win screen -->
+  <div id="screen-win" class="screen" style="display:none;">
+    <h2 id="win-heading">🏆 Tower Complete!</h2>
+    <p>You built the whole tower! Amazing work! 🎉</p>
+    <p class="screen-stat" id="win-score"></p>
+    <button class="btn-primary" id="btn-win-again">Play Again</button>
+  </div>
+
   <!-- Game over screen -->
   <div id="screen-gameover" class="screen" style="display:none;">
     <h2>Game Over! 🔺</h2>
@@ -416,6 +436,7 @@
   const TW = 80;           // triangle base width in SVG units
   const TH = 69;           // triangle height in SVG units (~TW * sqrt(3)/2)
   const COLS_BASE = 7;     // widest row slot count
+  const TOTAL_TRIANGLES = COLS_BASE * (COLS_BASE + 1) / 2; // 28 — full pyramid
   const MAX_LEVEL = 5;
   const TRIANGLES_PER_LEVEL = 5;
   const VIEWBOX_W = 560;
@@ -493,11 +514,11 @@
   // ── Tower tiling coordinates ─────────────────────────────────────────────────
   // Row 0 is the base (widest). Each row has (COLS_BASE - row) slots.
   // Slots alternate point-up (even index) and point-down (odd index).
-  // Row offset: each row is shifted right by TW/2 * row to center the pyramid.
+  // Each row is centered on VIEWBOX_W/2 so the result is a proper pyramid.
+  // Width of row n = (COLS_BASE - row + 1) * TW/2, so:
+  //   rowOffsetX = VIEWBOX_W/2 - (COLS_BASE - row + 1) * TW/4
   function triangleCoords(row, col) {
-    // col index within the row
-    const slotsInRow = COLS_BASE - row;
-    const rowOffsetX = SVG_PAD_X + (row * TW / 2);
+    const rowOffsetX = VIEWBOX_W / 2 - (COLS_BASE - row + 1) * TW / 4;
     const y = SVG_BASE_Y - row * TH;
     const x = rowOffsetX + col * (TW / 2);
     const pointUp = (col % 2 === 0);
@@ -671,8 +692,10 @@
       renderHUD();
       showFeedback(correctMsgs[randInt(0, correctMsgs.length - 1)], 'correct');
 
-      // Level up check
-      if (gs.placed > 0 && gs.placed % TRIANGLES_PER_LEVEL === 0 && gs.level < MAX_LEVEL) {
+      // Win check, then level-up check
+      if (gs.placed >= TOTAL_TRIANGLES) {
+        setTimeout(triggerWin, 800);
+      } else if (gs.placed % TRIANGLES_PER_LEVEL === 0 && gs.level < MAX_LEVEL) {
         gs.level++;
         gs.status = 'levelup';
         showLevelUp();
@@ -707,6 +730,30 @@
     }
   }
 
+  // ── Win ──────────────────────────────────────────────────────────────────────
+  function flashTowerGold() {
+    // Cascade gold fill across all placed triangles, left-to-right bottom-to-top
+    const polys = [...towerGroup.querySelectorAll('polygon')];
+    polys.forEach((p, i) => {
+      setTimeout(() => {
+        p.style.transition = 'fill 0.35s, stroke 0.35s';
+        p.setAttribute('fill', '#ffd166');
+        p.setAttribute('stroke', '#e8a800');
+      }, i * 35);
+    });
+  }
+
+  function triggerWin() {
+    gs.status = 'win';
+    challengeArea.style.display = 'none';
+    feedbackEl.classList.remove('show');
+    flashTowerGold();
+    setTimeout(() => {
+      document.getElementById('win-score').textContent = `Final Score: ${gs.score}`;
+      document.getElementById('screen-win').style.display = '';
+    }, TOTAL_TRIANGLES * 35 + 400); // wait for gold sweep to finish
+  }
+
   // ── Level up ─────────────────────────────────────────────────────────────────
   function showLevelUp() {
     levelupBanner.textContent = `Level ${gs.level}! 🎉`;
@@ -734,8 +781,9 @@
   function startGame() {
     gs = freshState();
     gs.status = 'playing';
-    screenIdle.style.display    = 'none';
+    screenIdle.style.display     = 'none';
     screenGameover.style.display = 'none';
+    document.getElementById('screen-win').style.display = 'none';
     renderTower();
     renderHUD();
     newChallenge();
@@ -749,6 +797,7 @@
 
     document.getElementById('btn-start').addEventListener('click', startGame);
     document.getElementById('btn-again').addEventListener('click', startGame);
+    document.getElementById('btn-win-again').addEventListener('click', startGame);
   }
 
   document.addEventListener('DOMContentLoaded', init);
