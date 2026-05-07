@@ -225,28 +225,6 @@
       justify-content: center;
     }
 
-    .btn-share {
-      background: var(--clr-header-bg);
-      color: var(--clr-fun);
-      border: 2px solid var(--clr-fun);
-      border-radius: 50px;
-      padding: 0.65rem 1.5rem;
-      font-family: var(--font-display);
-      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-      font-weight: 700;
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: filter 0.15s;
-    }
-
-    .btn-share:hover, .btn-share:active { filter: brightness(1.2); }
-
-    #share-note {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.55);
-      margin-top: 0.5rem;
-    }
-
     @keyframes badgePop {
       0%   { transform: scale(0.4); opacity: 0; }
       70%  { transform: scale(1.12); opacity: 1; }
@@ -508,10 +486,8 @@
     <div id="badge-award-title"></div>
     <p id="badge-award-praise"></p>
     <div class="badge-award-btns">
-      <button class="btn-share" id="btn-share">Share with Teacher 📧</button>
       <button class="btn-primary" id="btn-continue">Continue →</button>
     </div>
-    <div id="share-note">Your device will open your email app.</div>
   </div>
 
   <!-- Win screen -->
@@ -520,10 +496,8 @@
     <p>You completed all 5 levels and earned every badge!</p>
     <p class="screen-stat" id="win-score"></p>
     <div class="badge-award-btns">
-      <button class="btn-share" id="btn-share-win">Share Your Achievement 📧</button>
       <button class="btn-primary" id="btn-win-again">Play Again</button>
     </div>
-    <div id="share-note-win" style="font-size:0.8rem;color:var(--clr-muted);margin-top:0.5rem;">Your device will open your email app.</div>
   </div>
 
   <!-- Game over screen -->
@@ -939,56 +913,7 @@
     document.getElementById('badge-award-praise').textContent =
       `You completed Level ${level} — ${PRAISE_LINES[level]}`;
 
-    // Share button
-    const shareBtn = document.getElementById('btn-share');
-    shareBtn.textContent = 'Share with Teacher 📧';
-    shareBtn.disabled = false;
-    shareBtn.onclick = () => {
-      window.location.href = buildShareEmail(level, def.badge);
-      shareBtn.textContent = '✓ Email opened!';
-      shareBtn.disabled = true;
-      setTimeout(() => {
-        shareBtn.textContent = 'Share with Teacher 📧';
-        shareBtn.disabled = false;
-      }, 2000);
-    };
-
     screenBadge.style.display = '';
-  }
-
-  // ── Email builder ─────────────────────────────────────────────────────────────
-  function buildShareEmail(level, badgeDef) {
-    const subject = `I earned the "${badgeDef.title}" badge in Triangle Tower!`;
-    const body = [
-      `Hi!`,
-      ``,
-      `I just earned the "${badgeDef.title}" badge ${badgeDef.emoji} in Triangle Tower!`,
-      `I completed Level ${level}: ${LEVEL_DEFS[level].label}`,
-      ``,
-      `You can play Triangle Tower here:`,
-      `https://games.linocoria.com/games/math/triangle-tower/`,
-      ``,
-      `– A proud triangle expert 🔺`,
-    ].join('\n');
-    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }
-
-  function buildWinEmail() {
-    const titles = gs.badges.map(l => LEVEL_DEFS[l].badge.title).join(', ');
-    const subject = `I completed ALL of Triangle Tower!`;
-    const body = [
-      `Hi!`,
-      ``,
-      `I just completed ALL 5 levels of Triangle Tower and earned every badge!`,
-      ``,
-      `My badges: ${titles}`,
-      ``,
-      `You can play Triangle Tower here:`,
-      `https://games.linocoria.com/games/math/triangle-tower/`,
-      ``,
-      `– A Triangle Master 🏆`,
-    ].join('\n');
-    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   // ── Challenge rendering ───────────────────────────────────────────────────────
@@ -1375,20 +1300,6 @@
     gs.status = 'win';
     challengeArea.style.display = 'none';
     feedbackEl.classList.remove('show');
-
-    const shareWinBtn = document.getElementById('btn-share-win');
-    shareWinBtn.textContent = 'Share Your Achievement 📧';
-    shareWinBtn.disabled = false;
-    shareWinBtn.onclick = () => {
-      window.location.href = buildWinEmail();
-      shareWinBtn.textContent = '✓ Email opened!';
-      shareWinBtn.disabled = true;
-      setTimeout(() => {
-        shareWinBtn.textContent = 'Share Your Achievement 📧';
-        shareWinBtn.disabled = false;
-      }, 2000);
-    };
-
     document.getElementById('win-score').textContent = `Final Score: ${gs.score}`;
     document.getElementById('screen-win').style.display = '';
   }
