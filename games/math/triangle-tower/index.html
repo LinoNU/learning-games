@@ -251,7 +251,10 @@
       }
     }
 
-    #answer-grid button:hover { background: var(--clr-math-soft); }
+    /* :hover only on true pointer devices — prevents sticky highlight on mobile touch */
+    @media (hover: hover) {
+      #answer-grid button:hover { background: var(--clr-math-soft); }
+    }
 
     #answer-grid button:active {
       transform: scale(0.96);
@@ -340,7 +343,17 @@
 
 <header>
   <a href="../../index.html" class="back-link">← All Games</a>
-  <h1>🔺 Triangle Tower</h1>
+  <h1>
+    <svg viewBox="0 0 36 30" width="26" height="26"
+         style="vertical-align:middle;margin-right:5px;display:inline-block"
+         aria-hidden="true">
+      <!-- top △ -->
+      <polygon points="18,0 9,15 27,15"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
+      <!-- base: △ ▽ △ -->
+      <polygon points="9,15 0,30 18,30"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
+      <polygon points="9,15 27,15 18,30" fill="#fff0f0" stroke="#cc4040" stroke-width="1.2"/>
+      <polygon points="27,15 18,30 36,30" fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
+    </svg>Triangle Tower</h1>
 </header>
 
 <div id="hud">
@@ -352,7 +365,15 @@
 <main>
   <!-- Idle screen -->
   <div id="screen-idle" class="screen">
-    <h2>🔺 Triangle Tower</h2>
+    <h2>
+      <svg viewBox="0 0 36 30" width="32" height="32"
+           style="vertical-align:middle;margin-right:6px;display:inline-block"
+           aria-hidden="true">
+        <polygon points="18,0 9,15 27,15"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
+        <polygon points="9,15 0,30 18,30"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
+        <polygon points="9,15 27,15 18,30" fill="#fff0f0" stroke="#cc4040" stroke-width="1.2"/>
+        <polygon points="27,15 18,30 36,30" fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
+      </svg>Triangle Tower</h2>
     <p>Two angles of a triangle are shown. Can you find the missing one? Remember: all three angles of a triangle always add up to 180°! Pick the right answer to add the triangle to your tower. How high can you build?</p>
     <button class="btn-primary" id="btn-start">Start Game</button>
   </div>
