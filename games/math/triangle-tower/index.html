@@ -1136,9 +1136,12 @@
   }
 
   function buildTypeButtons(correct, isStep2) {
-    const labels = shuffle(['Equilateral', 'Isosceles', 'Scalene', 'Right Triangle']);
+    // "Right Triangle" removed: a 45-45-90 triangle is both isosceles and a right triangle,
+    // making it an ambiguous answer. "Not a Triangle" is never correct for any validly
+    // generated triangle, so it serves as an unambiguous distractor.
+    const labels = shuffle(['Equilateral', 'Isosceles', 'Scalene', 'Not a Triangle']);
     renderAnswerButtons(
-      labels.map(l => ({ label: l, value: l.toLowerCase().replace(' triangle', '') })),
+      labels.map(l => ({ label: l, value: l.toLowerCase().replace(' a triangle', '').replace(' triangle', '') })),
       correct,
       (val) => handleTypeAnswer(val)
     );
