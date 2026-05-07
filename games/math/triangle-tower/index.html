@@ -1026,11 +1026,17 @@
       return [vx + dx / len * OUTSIDE, vy + dy / len * OUTSIDE];
     };
 
-    const pts = [[Ax, Ay], [Bx, By], [Cx, Cy]];
-    const labels = perm.map((origIdx, visPos) => {
-      // hideAngleIndex === null means show all; otherwise hide the matching angle index
+    // Map each screen vertex to the angle it was drawn with:
+    // A (top) uses perm[2], B (bottom-left) uses perm[0], C (bottom-right) uses perm[1].
+    // perm.map() iterates in perm-order, not vertex-order, so labels must be built explicitly.
+    const vertexDefs = [
+      { coords: [Ax, Ay], origIdx: perm[2] }, // top vertex A
+      { coords: [Bx, By], origIdx: perm[0] }, // bottom-left vertex B
+      { coords: [Cx, Cy], origIdx: perm[1] }, // bottom-right vertex C
+    ];
+    const labels = vertexDefs.map(({ coords, origIdx }) => {
       const hidden = hideAngleIndex !== null && hideAngleIndex !== undefined && origIdx === hideAngleIndex;
-      const [lx, ly] = outside(...pts[visPos]);
+      const [lx, ly] = outside(...coords);
       return {
         x: lx, y: ly,
         text: hidden ? '?' : `${angles[origIdx]}°`,
