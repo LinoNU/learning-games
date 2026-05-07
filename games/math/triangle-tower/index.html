@@ -993,8 +993,10 @@
 
   // ── Challenge rendering ───────────────────────────────────────────────────────
   // Draws a geometrically accurate triangle via law of sines.
-  function renderChallengeSVG(tri, hideAngleIndex) {
-    // hideAngleIndex: 0=a, 1=b, 2=c (null = show all)
+  // showSides=true: label each edge with its relative integer length (used for
+  // triangle-type challenges where equilateral/isosceles/scalene is defined by sides).
+  // showSides=false: label each vertex with its angle in degrees.
+  function renderChallengeSVG(tri, hideAngleIndex, showSides = false) {
     const angles = [tri.a, tri.b, tri.c];
     const perm = shuffle([0, 1, 2]);
 
@@ -1019,39 +1021,77 @@
     const [Cx, Cy] = mx(1, 0);
 
     const centX = (Ax + Bx + Cx) / 3, centY = (Ay + By + Cy) / 3;
-    const OUTSIDE = 18;
-    const outside = (vx, vy) => {
-      const dx = vx - centX, dy = vy - centY;
-      const len = Math.sqrt(dx * dx + dy * dy);
-      return [vx + dx / len * OUTSIDE, vy + dy / len * OUTSIDE];
-    };
 
-    // Map each screen vertex to the angle it was drawn with:
-    // A (top) uses perm[2], B (bottom-left) uses perm[0], C (bottom-right) uses perm[1].
-    // perm.map() iterates in perm-order, not vertex-order, so labels must be built explicitly.
-    const vertexDefs = [
-      { coords: [Ax, Ay], origIdx: perm[2] }, // top vertex A
-      { coords: [Bx, By], origIdx: perm[0] }, // bottom-left vertex B
-      { coords: [Cx, Cy], origIdx: perm[1] }, // bottom-right vertex C
-    ];
-    const labels = vertexDefs.map(({ coords, origIdx }) => {
-      const hidden = hideAngleIndex !== null && hideAngleIndex !== undefined && origIdx === hideAngleIndex;
-      const [lx, ly] = outside(...coords);
-      return {
-        x: lx, y: ly,
-        text: hidden ? '?' : `${angles[origIdx]}°`,
-        color: hidden ? '#ff6b6b' : '#2c2c3a',
+    let labelsSVG;
+
+    if (showSides) {
+      // Compute raw side lengths (BC base = 1) via law of sines.
+      // BC is opposite A, AB is opposite C, AC is opposite B.
+      const rawBC = 1;
+      const rawAB = AB;                                   // sin(aC)/sin(aA)
+      const rawAC = Math.sin(aB) / Math.sin(aA);
+      // Normalise: longest side → 10, round to integers.
+      const normScale = 10 / Math.max(rawBC, rawAB, rawAC);
+
+      // Place label at edge midpoint, offset perpendicular and outward from centroid.
+      const edgeMidLabel = (p1, p2, rawLen) => {
+        const midX = (p1[0] + p2[0]) / 2, midY = (p1[1] + p2[1]) / 2;
+        const ex = p2[0] - p1[0], ey = p2[1] - p1[1];
+        const eLen = Math.sqrt(ex*ex + ey*ey);
+        let nx = -ey/eLen, ny = ex/eLen;
+        if (nx*(centX-midX) + ny*(centY-midY) > 0) { nx=-nx; ny=-ny; }
+        const OFFSET = 14;
+        return { x: midX + nx*OFFSET, y: midY + ny*OFFSET,
+                 text: `${Math.round(rawLen * normScale)}` };
       };
-    });
+
+      const sideLabels = [
+        edgeMidLabel([Bx,By], [Cx,Cy], rawBC),  // bottom edge BC
+        edgeMidLabel([Ax,Ay], [Bx,By], rawAB),  // left edge AB
+        edgeMidLabel([Ax,Ay], [Cx,Cy], rawAC),  // right edge AC
+      ];
+      labelsSVG = sideLabels.map(l =>
+        `<text x="${l.x.toFixed(1)}" y="${l.y.toFixed(1)}" text-anchor="middle"
+               font-family="'Fredoka',sans-serif" style="font-size:16px"
+               fill="#2c2c3a" font-weight="700">${l.text}</text>`
+      ).join('');
+
+    } else {
+      const OUTSIDE = 18;
+      const outside = (vx, vy) => {
+        const dx = vx - centX, dy = vy - centY;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        return [vx + dx / len * OUTSIDE, vy + dy / len * OUTSIDE];
+      };
+
+      // Map each screen vertex to the angle it was drawn with:
+      // A (top) uses perm[2], B (bottom-left) uses perm[0], C (bottom-right) uses perm[1].
+      // perm.map() iterates in perm-order, not vertex-order, so labels must be built explicitly.
+      const vertexDefs = [
+        { coords: [Ax, Ay], origIdx: perm[2] }, // top vertex A
+        { coords: [Bx, By], origIdx: perm[0] }, // bottom-left vertex B
+        { coords: [Cx, Cy], origIdx: perm[1] }, // bottom-right vertex C
+      ];
+      const labels = vertexDefs.map(({ coords, origIdx }) => {
+        const hidden = hideAngleIndex !== null && hideAngleIndex !== undefined && origIdx === hideAngleIndex;
+        const [lx, ly] = outside(...coords);
+        return {
+          x: lx, y: ly,
+          text: hidden ? '?' : `${angles[origIdx]}°`,
+          color: hidden ? '#ff6b6b' : '#2c2c3a',
+        };
+      });
+      labelsSVG = labels.map(l =>
+        `<text x="${l.x.toFixed(1)}" y="${l.y.toFixed(1)}" text-anchor="middle"
+               font-family="'Fredoka',sans-serif" style="font-size:16px"
+               fill="${l.color}" font-weight="700">${l.text}</text>`
+      ).join('');
+    }
 
     challengeSvg.innerHTML = `
       <polygon points="${Ax.toFixed(1)},${Ay.toFixed(1)} ${Bx.toFixed(1)},${By.toFixed(1)} ${Cx.toFixed(1)},${Cy.toFixed(1)}"
                fill="#fff0f0" stroke="#ff6b6b" stroke-width="3" />
-      ${labels.map(l => `
-        <text x="${l.x.toFixed(1)}" y="${l.y.toFixed(1)}" text-anchor="middle"
-              font-family="'Fredoka',sans-serif" style="font-size:16px"
-              fill="${l.color}" font-weight="700">${l.text}</text>
-      `).join('')}
+      ${labelsSVG}
     `;
 
     challengeSvg.classList.remove('shake', 'slide-in');
@@ -1112,7 +1152,7 @@
       const actual = classifyTriType(tri);
       gs.typesSeen[actual] = (gs.typesSeen[actual] || 0) + 1;
       gs.correctAnswer = actual;
-      renderChallengeSVG(tri, null); // show all angles
+      renderChallengeSVG(tri, null, true); // show side lengths for equilateral/isosceles/scalene
       buildTypeButtons(actual, false);
 
     } else if (type === 'missing-and-type') {
@@ -1206,8 +1246,8 @@
           if (gs.status !== 'playing') return;
           gs.step = 2;
           gs.correctAnswer = classifyTriType(gs.currentTriangle);
-          // Fill in the ? on the triangle
-          renderChallengeSVG(gs.currentTriangle, null);
+          // Fill in the ? and switch to side-length display for the type step
+          renderChallengeSVG(gs.currentTriangle, null, true);
           updateStepIndicator('missing-and-type', 2);
           buildTypeButtons(gs.correctAnswer, true);
         }, 800);
