@@ -408,7 +408,7 @@
 
   <!-- Tower -->
   <div id="tower-area">
-    <svg id="tower-svg" viewBox="0 0 560 552" preserveAspectRatio="xMidYMax meet"
+    <svg id="tower-svg" viewBox="0 0 580 503" preserveAspectRatio="xMidYMax meet"
          role="img" aria-label="Triangle tower with 0 triangles placed">
       <g id="tower-group"></g>
     </svg>
@@ -435,14 +435,15 @@
   // ── Constants ────────────────────────────────────────────────────────────────
   const TW = 80;           // triangle base width in SVG units
   const TH = 69;           // triangle height in SVG units (~TW * sqrt(3)/2)
-  const COLS_BASE = 7;     // widest row slot count
-  const TOTAL_TRIANGLES = COLS_BASE * (COLS_BASE + 1) / 2; // 28 — full pyramid
+  const ROWS = 7;          // number of rows; base row has 2*ROWS-1 = 13 slots
+  const COLS_BASE = ROWS;  // alias kept for level/score logic
+  // Each row k (0=base) has 2*(ROWS-k)-1 slots → total = ROWS² triangles
+  const TOTAL_TRIANGLES = ROWS * ROWS; // 49
   const MAX_LEVEL = 5;
-  const TRIANGLES_PER_LEVEL = 5;
-  const VIEWBOX_W = 560;
-  const VIEWBOX_H = 552;   // 8 rows * TH + padding
-  const SVG_PAD_X = 20;    // horizontal padding so triangles don't clip
-  const SVG_BASE_Y = VIEWBOX_H - TH - 8; // y-coordinate of base row top
+  const TRIANGLES_PER_LEVEL = 7;      // ~one level-up per row
+  const VIEWBOX_W = 580;              // ROWS*TW + 20px padding
+  const VIEWBOX_H = 503;              // ROWS*TH + 20px padding
+  const SVG_BASE_Y = VIEWBOX_H - TH - 10; // top-y of base row triangles
 
   // ── State ────────────────────────────────────────────────────────────────────
   let gs; // gameState object — reset on each new game
@@ -512,13 +513,11 @@
   }
 
   // ── Tower tiling coordinates ─────────────────────────────────────────────────
-  // Row 0 is the base (widest). Each row has (COLS_BASE - row) slots.
-  // Slots alternate point-up (even index) and point-down (odd index).
-  // Each row is centered on VIEWBOX_W/2 so the result is a proper pyramid.
-  // Width of row n = (COLS_BASE - row + 1) * TW/2, so:
-  //   rowOffsetX = VIEWBOX_W/2 - (COLS_BASE - row + 1) * TW/4
+  // Row 0 is the base. Row k has 2*(ROWS-k)-1 slots (alternating △▽△▽…).
+  // Row width = (ROWS-k)*TW; each row is centered → rowOffsetX = (VW-(ROWS-k)*TW)/2.
+  // This produces a proper equilateral-triangle tessellation like the image.
   function triangleCoords(row, col) {
-    const rowOffsetX = VIEWBOX_W / 2 - (COLS_BASE - row + 1) * TW / 4;
+    const rowOffsetX = (VIEWBOX_W - (ROWS - row) * TW) / 2;
     const y = SVG_BASE_Y - row * TH;
     const x = rowOffsetX + col * (TW / 2);
     const pointUp = (col % 2 === 0);
@@ -534,26 +533,38 @@
   }
 
   // ── Render tower ─────────────────────────────────────────────────────────────
+  // Renders all ROWS² slots. Placed triangles: △ red, ▽ light pink.
+  // Unplaced slots: faint outline so the full pyramid shape is always visible.
   function renderTower(flashIndex) {
     towerGroup.innerHTML = '';
     let idx = 0;
-    outer: for (let row = 0; row < COLS_BASE; row++) {
-      const slots = COLS_BASE - row;
+    for (let row = 0; row < ROWS; row++) {
+      const slots = 2 * (ROWS - row) - 1;
       for (let col = 0; col < slots; col++) {
-        if (idx >= gs.placed) break outer;
         const { x, y, pointUp } = triangleCoords(row, col);
         const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
         poly.setAttribute('points', polyPoints(x, y, pointUp));
-        poly.setAttribute('fill', idx === flashIndex ? '#b7f7c2' : '#fff0f0');
-        poly.setAttribute('stroke', '#ff6b6b');
-        poly.setAttribute('stroke-width', '2');
+
         if (idx === flashIndex) {
-          poly.style.transition = 'fill 0.5s';
-          // fade back
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => { poly.setAttribute('fill', '#fff0f0'); });
-          });
+          poly.setAttribute('fill', '#b7f7c2');
+          poly.setAttribute('stroke', '#2d9e5f');
+          poly.setAttribute('stroke-width', '1.5');
+          poly.style.transition = 'fill 0.5s, stroke 0.5s';
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            poly.setAttribute('fill', pointUp ? '#ff6b6b' : '#fff0f0');
+            poly.setAttribute('stroke', '#cc4040');
+          }));
+        } else if (idx < gs.placed) {
+          poly.setAttribute('fill', pointUp ? '#ff6b6b' : '#fff0f0');
+          poly.setAttribute('stroke', '#cc4040');
+          poly.setAttribute('stroke-width', '1.5');
+        } else {
+          // not yet placed — faint ghost so the full pyramid shape shows
+          poly.setAttribute('fill', '#ede8df');
+          poly.setAttribute('stroke', '#d4ccbf');
+          poly.setAttribute('stroke-width', '1');
         }
+
         towerGroup.appendChild(poly);
         idx++;
       }
