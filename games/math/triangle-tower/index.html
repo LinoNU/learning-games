@@ -24,9 +24,7 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100%;
-    }
+    html, body { height: 100%; }
 
     body {
       display: flex;
@@ -70,22 +68,36 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.4rem 1rem;
+      padding: 0.35rem 1rem;
       background: var(--clr-header-bg);
       color: var(--clr-header-txt);
       font-family: var(--font-display);
-      font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+      font-size: clamp(0.8rem, 2.2vw, 1rem);
       flex-shrink: 0;
       border-top: 1px solid rgba(255,255,255,0.1);
     }
 
-    #hud-lives {
-      font-size: clamp(0.85rem, 2.5vw, 1.1rem);
-      letter-spacing: 0.15em;
+    #hud-lives { letter-spacing: 0.15em; }
+
+    #hud-level-label {
+      font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+      opacity: 0.85;
     }
 
-    @media (max-width: 379px) {
-      #hud-lives { font-size: 0.9rem; }
+    @media (max-width: 479px) {
+      #hud-level-label { display: none; }
+    }
+
+    /* ── Badge tray ── */
+    #badge-tray {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: var(--clr-bg);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #e0d9cc;
     }
 
     /* ── Main ── */
@@ -97,7 +109,7 @@
       position: relative;
     }
 
-    /* ── Screens (idle / gameover) ── */
+    /* ── Screens (overlay) ── */
     .screen {
       position: absolute;
       inset: 0;
@@ -149,7 +161,101 @@
       color: var(--clr-muted);
     }
 
-    /* ── Tower Area ── */
+    /* ── Level intro overlay ── */
+    #screen-intro {
+      z-index: 25;
+    }
+
+    #screen-intro h2 {
+      color: var(--clr-math);
+    }
+
+    #intro-level-num {
+      font-family: var(--font-display);
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: var(--clr-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    #intro-label {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 700;
+      color: var(--clr-math);
+      margin-bottom: 0.75rem;
+    }
+
+    #intro-desc {
+      font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+      max-width: 400px;
+      line-height: 1.6;
+      color: var(--clr-text);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Badge award overlay ── */
+    #screen-badge {
+      z-index: 30;
+      background: rgba(44, 44, 58, 0.92);
+      color: var(--clr-header-txt);
+    }
+
+    #screen-badge h2 { color: var(--clr-fun); }
+
+    #badge-award-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+
+    #badge-award-praise {
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: rgba(255,255,255,0.85);
+      max-width: 380px;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .badge-award-btns {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-share {
+      background: var(--clr-header-bg);
+      color: var(--clr-fun);
+      border: 2px solid var(--clr-fun);
+      border-radius: 50px;
+      padding: 0.65rem 1.5rem;
+      font-family: var(--font-display);
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: filter 0.15s;
+    }
+
+    .btn-share:hover, .btn-share:active { filter: brightness(1.2); }
+
+    #share-note {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.55);
+      margin-top: 0.5rem;
+    }
+
+    @keyframes badgePop {
+      0%   { transform: scale(0.4); opacity: 0; }
+      70%  { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    #badge-award-svg { animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+    /* ── Tower area ── */
     #tower-area {
       flex: 1;
       display: flex;
@@ -189,17 +295,17 @@
       transform: translate(-50%, -50%) scale(1);
     }
 
-    /* ── Challenge Area ── */
+    /* ── Challenge area ── */
     #challenge-area {
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
       background: var(--clr-surface);
       border-top: 2px solid var(--clr-math-soft);
-      max-height: 45vh;
+      max-height: 48vh;
     }
 
     @media (min-width: 600px) {
@@ -209,7 +315,6 @@
       }
     }
 
-    /* Challenge triangle SVG */
     #challenge-svg {
       max-width: 140px;
       height: auto;
@@ -219,6 +324,23 @@
     @media (min-width: 600px) {
       #challenge-svg { max-width: 180px; }
     }
+
+    /* Step indicator for 2-step challenges */
+    #step-indicator {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 0.1rem;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+      transition: background 0.2s;
+    }
+
+    .step-dot.active { background: var(--clr-math); }
 
     /* Answer grid */
     #answer-grid {
@@ -231,7 +353,7 @@
       min-width: 100px;
       min-height: 52px;
       padding: 0.5rem 0.75rem;
-      font-size: clamp(1rem, 3vw, 1.4rem);
+      font-size: clamp(0.95rem, 3vw, 1.3rem);
       font-family: var(--font-display);
       font-weight: 600;
       border: 2px solid var(--clr-math);
@@ -245,22 +367,14 @@
     }
 
     @media (min-width: 600px) {
-      #answer-grid button {
-        min-width: 120px;
-        min-height: 56px;
-      }
+      #answer-grid button { min-width: 120px; min-height: 56px; }
     }
 
-    /* :hover only on true pointer devices — prevents sticky highlight on mobile touch */
     @media (hover: hover) {
       #answer-grid button:hover { background: var(--clr-math-soft); }
     }
 
-    #answer-grid button:active {
-      transform: scale(0.96);
-      background: var(--clr-math-soft);
-    }
-
+    #answer-grid button:active { transform: scale(0.96); background: var(--clr-math-soft); }
     #answer-grid button.correct { background: #b7f7c2 !important; border-color: #2d9e5f; }
     #answer-grid button.wrong   { background: #ffd6d6 !important; }
     #answer-grid button:disabled { cursor: default; }
@@ -294,19 +408,20 @@
 
     footer a { color: var(--clr-muted); }
 
-    /* ── Win screen ── */
+    /* ── Animations ── */
     @keyframes winEntrance {
       from { opacity: 0; transform: scale(0.85); }
       to   { opacity: 1; transform: scale(1); }
     }
+
     @keyframes trophyBounce {
       0%, 100% { transform: translateY(0); }
       50%      { transform: translateY(-6px); }
     }
+
     #screen-win { animation: winEntrance 0.45s ease-out; }
     #win-heading { animation: trophyBounce 1.2s ease-in-out infinite; }
 
-    /* ── Shake animation ── */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-8px); }
@@ -317,7 +432,6 @@
 
     .shake { animation: shake 0.4s ease; }
 
-    /* ── Incoming triangle slide-in ── */
     @keyframes slideIn {
       from { transform: translateX(120%); opacity: 0.6; }
       to   { transform: translateX(0);    opacity: 1; }
@@ -359,9 +473,7 @@
     <svg viewBox="0 0 36 30" width="26" height="26"
          style="vertical-align:middle;margin-right:5px;display:inline-block"
          aria-hidden="true">
-      <!-- top △ -->
       <polygon points="18,0 9,15 27,15"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
-      <!-- base: △ ▽ △ -->
       <polygon points="9,15 0,30 18,30"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
       <polygon points="9,15 27,15 18,30" fill="#fff0f0" stroke="#cc4040" stroke-width="1.2"/>
       <polygon points="27,15 18,30 36,30" fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
@@ -371,45 +483,62 @@
 <div id="hud">
   <span id="hud-score">Score: 0</span>
   <span id="hud-lives" aria-label="Lives remaining">🔺🔺🔺</span>
-  <span id="hud-level">Level 1</span>
+  <span id="hud-level-wrap">
+    <span id="hud-level">Level 1</span>
+    <span id="hud-level-label"></span>
+  </span>
 </div>
 
+<div id="badge-tray" aria-label="Badges earned"></div>
+
 <main>
-  <!-- Idle screen -->
-  <div id="screen-idle" class="screen">
-    <h2>
-      <svg viewBox="0 0 36 30" width="32" height="32"
-           style="vertical-align:middle;margin-right:6px;display:inline-block"
-           aria-hidden="true">
-        <polygon points="18,0 9,15 27,15"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
-        <polygon points="9,15 0,30 18,30"  fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
-        <polygon points="9,15 27,15 18,30" fill="#fff0f0" stroke="#cc4040" stroke-width="1.2"/>
-        <polygon points="27,15 18,30 36,30" fill="#ff6b6b" stroke="#cc4040" stroke-width="1.2"/>
-      </svg>Triangle Tower</h2>
-    <p>Two angles of a triangle are shown. Can you find the missing one? Remember: all three angles of a triangle always add up to 180°! Pick the right answer to add the triangle to your tower. How high can you build?</p>
-    <button class="btn-primary" id="btn-start">Start Game</button>
+  <!-- Level intro overlay (replaces idle screen) -->
+  <div id="screen-intro" class="screen">
+    <div id="intro-level-num"></div>
+    <div id="intro-label"></div>
+    <p id="intro-desc"></p>
+    <button class="btn-primary" id="btn-letsgo">Let's go! →</button>
+  </div>
+
+  <!-- Badge award overlay -->
+  <div id="screen-badge" class="screen" style="display:none;">
+    <svg id="badge-award-svg" viewBox="0 0 40 46" width="120" height="138"
+         aria-hidden="true" style="margin-bottom:0.75rem;"></svg>
+    <h2>🎉 You earned a badge!</h2>
+    <div id="badge-award-title"></div>
+    <p id="badge-award-praise"></p>
+    <div class="badge-award-btns">
+      <button class="btn-share" id="btn-share">Share with Teacher 📧</button>
+      <button class="btn-primary" id="btn-continue">Continue →</button>
+    </div>
+    <div id="share-note">Your device will open your email app.</div>
   </div>
 
   <!-- Win screen -->
   <div id="screen-win" class="screen" style="display:none;">
-    <h2 id="win-heading">🏆 Tower Complete!</h2>
-    <p>You built the whole tower! Amazing work! 🎉</p>
+    <h2 id="win-heading">🏆 Triangle Master! 🏆</h2>
+    <p>You completed all 5 levels and earned every badge!</p>
     <p class="screen-stat" id="win-score"></p>
-    <button class="btn-primary" id="btn-win-again">Play Again</button>
+    <div class="badge-award-btns">
+      <button class="btn-share" id="btn-share-win">Share Your Achievement 📧</button>
+      <button class="btn-primary" id="btn-win-again">Play Again</button>
+    </div>
+    <div id="share-note-win" style="font-size:0.8rem;color:var(--clr-muted);margin-top:0.5rem;">Your device will open your email app.</div>
   </div>
 
   <!-- Game over screen -->
   <div id="screen-gameover" class="screen" style="display:none;">
     <h2>Game Over! 🔺</h2>
     <p class="screen-stat" id="go-score"></p>
-    <p class="screen-stat" id="go-rows"></p>
+    <p class="screen-stat" id="go-level"></p>
+    <p class="screen-stat" id="go-badges"></p>
     <button class="btn-primary" id="btn-again">Play Again</button>
   </div>
 
   <!-- Tower -->
   <div id="tower-area">
-    <svg id="tower-svg" viewBox="0 0 580 503" preserveAspectRatio="xMidYMax meet"
-         role="img" aria-label="Triangle tower with 0 triangles placed">
+    <svg id="tower-svg" viewBox="0 0 580 230" preserveAspectRatio="xMidYMax meet"
+         role="img" aria-label="Triangle tower">
       <g id="tower-group"></g>
     </svg>
     <div id="levelup-banner">Level Up! 🎉</div>
@@ -421,9 +550,14 @@
   <!-- Challenge -->
   <div id="challenge-area" style="display:none;">
     <svg id="challenge-svg" viewBox="0 0 200 180"
-         role="img" aria-label="Triangle with two known angles and one missing angle">
-    </svg>
-    <div id="answer-grid" role="group" aria-label="Answer choices"></div>
+         role="img" aria-label="Triangle challenge"></svg>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;">
+      <div id="step-indicator" style="display:none;">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+      </div>
+      <div id="answer-grid" role="group" aria-label="Answer choices"></div>
+    </div>
   </div>
 </main>
 
@@ -433,46 +567,106 @@
 
 <script>
   // ── Constants ────────────────────────────────────────────────────────────────
-  const TW = 80;           // triangle base width in SVG units
-  const TH = 69;           // triangle height in SVG units (~TW * sqrt(3)/2)
-  const ROWS = 7;          // number of rows; base row has 2*ROWS-1 = 13 slots
-  const COLS_BASE = ROWS;  // alias kept for level/score logic
-  // Each row k (0=base) has 2*(ROWS-k)-1 slots → total = ROWS² triangles
-  const TOTAL_TRIANGLES = ROWS * ROWS; // 49
+  const TW = 80;
+  const TH = 69;
+  const ROWS = 3;
+  const TOTAL_TRIANGLES = Array.from({ length: ROWS }, (_, k) => 2 * (ROWS - k) - 1)
+                                .reduce((a, b) => a + b, 0); // 5+3+1 = 9
+  const TRIANGLES_PER_LEVEL = TOTAL_TRIANGLES; // complete the tower = finish the level
   const MAX_LEVEL = 5;
-  const TRIANGLES_PER_LEVEL = 7;      // ~one level-up per row
-  const VIEWBOX_W = 580;              // ROWS*TW + 20px padding
-  const VIEWBOX_H = 503;              // ROWS*TH + 20px padding
-  const SVG_BASE_Y = VIEWBOX_H - TH - 10; // top-y of base row triangles
+  const VIEWBOX_W = 580;
+  const VIEWBOX_H = 230;
+  const SVG_BASE_Y = VIEWBOX_H - TH - 10;
+
+  // ── Level definitions ────────────────────────────────────────────────────────
+  const LEVEL_DEFS = [
+    null, // index 0 unused
+    {
+      level:       1,
+      type:        'missing-angle',
+      label:       '🔢 Find the Missing Angle',
+      description: 'Two angles are shown. What is the third angle? Remember: angles in a triangle add up to 180°!',
+      badge:       { emoji: '🔢', title: 'Angle Hunter',     color: '#ff6b6b' },
+    },
+    {
+      level:       2,
+      type:        'triangle-type',
+      label:       '🔺 Name That Triangle!',
+      description: 'Look at the angles. What kind of triangle is this?',
+      badge:       { emoji: '🔺', title: 'Triangle Spotter', color: '#ffd166' },
+    },
+    {
+      level:       3,
+      type:        'missing-and-type',
+      label:       '🧩 Find the Angle AND the Type',
+      description: 'Find the missing angle — then tell us what kind of triangle it is!',
+      badge:       { emoji: '🧩', title: 'Double Expert',    color: '#4ecdc4' },
+    },
+    {
+      level:       4,
+      type:        'acute-obtuse-right',
+      label:       '📐 Acute, Right, or Obtuse?',
+      description: 'Look at all three angles. Is this triangle acute, right, or obtuse?',
+      badge:       { emoji: '📐', title: 'Angle Classifier', color: '#6c63ff' },
+    },
+    {
+      level:       5,
+      type:        'mixed',
+      label:       '🏆 Master Challenge',
+      description: 'Any question type — stay sharp!',
+      badge:       { emoji: '🏆', title: 'Triangle Master',  color: '#ff6b6b' },
+    },
+  ];
+
+  const PRAISE_LINES = [
+    null,
+    'You can find missing angles like a pro!',
+    'You know your triangle types!',
+    'You found the angle AND named the triangle!',
+    'You can classify any triangle!',
+    'You are a Triangle Master!',
+  ];
 
   // ── State ────────────────────────────────────────────────────────────────────
-  let gs; // gameState object — reset on each new game
+  let gs;
 
   function freshState() {
     return {
-      status: 'idle',       // idle | playing | levelup | gameover
-      score: 0,
-      lives: 3,
-      level: 1,
-      placed: 0,            // total correctly placed triangles
+      status:       'idle',   // idle | playing | badge | gameover | win
+      score:        0,
+      lives:        3,
+      level:        1,
+      placed:       0,        // triangles placed in the CURRENT tower
+      step:         1,        // for missing-and-type: 1 or 2
+      pendingAngle: null,     // correct angle stored after step 1
+      typesSeen:    { equilateral: 0, isosceles: 0, scalene: 0 },
+      acuteRightObtuseSeen: { acute: 0, right: 0, obtuse: 0 },
+      badges:       [],
       currentTriangle: null,
-      correctAnswer: null,
+      correctAnswer:   null,
+      activeLevelType: null,  // resolved type for mixed level
     };
   }
 
   // ── DOM refs ─────────────────────────────────────────────────────────────────
-  const screenIdle    = document.getElementById('screen-idle');
-  const screenGameover= document.getElementById('screen-gameover');
-  const hudScore      = document.getElementById('hud-score');
-  const hudLives      = document.getElementById('hud-lives');
-  const hudLevel      = document.getElementById('hud-level');
-  const towerGroup    = document.getElementById('tower-group');
-  const towerSvg      = document.getElementById('tower-svg');
-  const challengeArea = document.getElementById('challenge-area');
-  const challengeSvg  = document.getElementById('challenge-svg');
-  const answerGrid    = document.getElementById('answer-grid');
-  const feedbackEl    = document.getElementById('feedback');
-  const levelupBanner = document.getElementById('levelup-banner');
+  const screenIntro    = document.getElementById('screen-intro');
+  const screenBadge    = document.getElementById('screen-badge');
+  const screenGameover = document.getElementById('screen-gameover');
+  const hudScore       = document.getElementById('hud-score');
+  const hudLives       = document.getElementById('hud-lives');
+  const hudLevel       = document.getElementById('hud-level');
+  const hudLevelLabel  = document.getElementById('hud-level-label');
+  const badgeTray      = document.getElementById('badge-tray');
+  const towerGroup     = document.getElementById('tower-group');
+  const towerSvg       = document.getElementById('tower-svg');
+  const challengeArea  = document.getElementById('challenge-area');
+  const challengeSvg   = document.getElementById('challenge-svg');
+  const answerGrid     = document.getElementById('answer-grid');
+  const feedbackEl     = document.getElementById('feedback');
+  const levelupBanner  = document.getElementById('levelup-banner');
+  const stepIndicator  = document.getElementById('step-indicator');
+  const dot1           = document.getElementById('dot-1');
+  const dot2           = document.getElementById('dot-2');
 
   // ── Utility ──────────────────────────────────────────────────────────────────
   function randInt(min, max) {
@@ -480,42 +674,120 @@
   }
 
   function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
       const j = randInt(0, i);
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    return arr;
+    return a;
   }
 
-  // ── Triangle puzzle generation ───────────────────────────────────────────────
-  function generateTriangle(level) {
-    const minAngle = level <= 2 ? 30 : 15;
-    let a, b, c;
+  // ── Triangle generation ───────────────────────────────────────────────────────
+  function generateTriangleAngles(forceType) {
+    const minAngle = 15;
+    let a, b, c, type;
+
+    if (forceType === 'equilateral') {
+      return { a: 60, b: 60, c: 60, triType: 'equilateral' };
+    }
+
+    if (forceType === 'isosceles') {
+      let base;
+      do { base = randInt(20, 80); } while (base === 60);
+      a = base; b = base; c = 180 - 2 * base;
+      if (c < minAngle) { a = 50; b = 50; c = 80; }
+      return { a, b, c, triType: 'isosceles' };
+    }
+
+    if (forceType === 'scalene') {
+      do {
+        a = randInt(minAngle, 130);
+        b = randInt(minAngle, 180 - a - minAngle);
+        c = 180 - a - b;
+      } while (c < minAngle || a === b || b === c || a === c || a === 60 || b === 60 || c === 60);
+      return { a, b, c, triType: 'scalene' };
+    }
+
+    if (forceType === 'right') {
+      // right scalene or right isosceles
+      const sub = randInt(0, 1);
+      if (sub === 0) { // 45-45-90
+        return { a: 45, b: 45, c: 90, triType: 'right-isosceles' };
+      } else {
+        const x = randInt(20, 69);
+        return { a: x, b: 90 - x, c: 90, triType: 'right-scalene' };
+      }
+    }
+
+    if (forceType === 'obtuse') {
+      do {
+        a = randInt(minAngle, 89);
+        b = randInt(minAngle, 89);
+        c = 180 - a - b;
+      } while (c <= 90 || c >= 180);
+      return { a, b, c, triType: 'obtuse' };
+    }
+
+    if (forceType === 'acute') {
+      do {
+        a = randInt(minAngle, 89);
+        b = randInt(minAngle, 89);
+        c = 180 - a - b;
+      } while (c <= 0 || c >= 90);
+      return { a, b, c, triType: 'acute' };
+    }
+
+    // Generic
     do {
       a = randInt(minAngle, 150);
       b = randInt(minAngle, 180 - a - minAngle);
       c = 180 - a - b;
     } while (c < minAngle);
-    return { a, b, c };
+    return { a, b, c, triType: null };
   }
 
-  function generateOptions(correct, level) {
-    const range = level >= 4 ? 15 : 30;
+  function classifyTriType(tri) {
+    const angles = [tri.a, tri.b, tri.c];
+    const sorted = [...angles].sort((x, y) => x - y);
+    if (sorted[0] === sorted[2]) return 'equilateral';
+    if (sorted[0] === sorted[1] || sorted[1] === sorted[2]) return 'isosceles';
+    return 'scalene';
+  }
+
+  function classifyAcuteRight(tri) {
+    const angles = [tri.a, tri.b, tri.c];
+    if (angles.some(x => x === 90)) return 'right';
+    if (angles.some(x => x > 90)) return 'obtuse';
+    return 'acute';
+  }
+
+  function pickWeightedType(counts, types) {
+    const min = Math.min(...types.map(t => counts[t]));
+    const candidates = types.filter(t => counts[t] === min);
+    return candidates[randInt(0, candidates.length - 1)];
+  }
+
+  function generateOptions(correct, range) {
+    range = range || 30;
     const opts = new Set([correct]);
     while (opts.size < 4) {
       let d;
-      do {
-        d = correct + randInt(-range, range);
-      } while (d < 1 || d > 178 || opts.has(d));
+      do { d = correct + randInt(-range, range); }
+      while (d < 1 || d > 178 || opts.has(d));
       opts.add(d);
     }
     return shuffle([...opts]);
   }
 
-  // ── Tower tiling coordinates ─────────────────────────────────────────────────
-  // Row 0 is the base. Row k has 2*(ROWS-k)-1 slots (alternating △▽△▽…).
-  // Row width = (ROWS-k)*TW; each row is centered → rowOffsetX = (VW-(ROWS-k)*TW)/2.
-  // This produces a proper equilateral-triangle tessellation like the image.
+  // Resolve which challenge sub-type to run this turn
+  function resolveType(level) {
+    const def = LEVEL_DEFS[level];
+    if (def.type !== 'mixed') return def.type;
+    const types = ['missing-angle', 'triangle-type', 'missing-and-type', 'acute-obtuse-right'];
+    return types[randInt(0, 3)];
+  }
+
+  // ── Tower tiling ──────────────────────────────────────────────────────────────
   function triangleCoords(row, col) {
     const rowOffsetX = (VIEWBOX_W - (ROWS - row) * TW) / 2;
     const y = SVG_BASE_Y - row * TH;
@@ -532,9 +804,7 @@
     }
   }
 
-  // ── Render tower ─────────────────────────────────────────────────────────────
-  // Renders all ROWS² slots. Placed triangles: △ red, ▽ light pink.
-  // Unplaced slots: faint outline so the full pyramid shape is always visible.
+  // ── Render tower ──────────────────────────────────────────────────────────────
   function renderTower(flashIndex) {
     towerGroup.innerHTML = '';
     let idx = 0;
@@ -559,7 +829,6 @@
           poly.setAttribute('stroke', '#cc4040');
           poly.setAttribute('stroke-width', '1.5');
         } else {
-          // not yet placed — faint ghost so the full pyramid shape shows
           poly.setAttribute('fill', '#ede8df');
           poly.setAttribute('stroke', '#d4ccbf');
           poly.setAttribute('stroke-width', '1');
@@ -569,181 +838,459 @@
         idx++;
       }
     }
-    towerSvg.setAttribute('aria-label', `Triangle tower with ${gs.placed} triangle${gs.placed !== 1 ? 's' : ''} placed`);
   }
 
-  // ── Render HUD ───────────────────────────────────────────────────────────────
+  // ── Render HUD ────────────────────────────────────────────────────────────────
   function renderHUD() {
     hudScore.textContent = `Score: ${gs.score}`;
     const lives = '🔺'.repeat(gs.lives) + '<span style="opacity:0.3">' + '🔺'.repeat(3 - gs.lives) + '</span>';
     hudLives.innerHTML = lives;
     hudLevel.textContent = `Level ${gs.level}`;
+    const def = LEVEL_DEFS[gs.level];
+    hudLevelLabel.textContent = def ? ` — ${def.label}` : '';
   }
 
-  // ── Challenge SVG ────────────────────────────────────────────────────────────
-  // Draws a geometrically accurate triangle whose shape matches the actual angles.
-  // Uses law of sines to compute vertices from the angles, then scales to fit viewBox.
-  function renderChallengeSVG(tri) {
-    // Randomly assign which of the three angles appears at each visual corner.
-    // perm[0] → bottom-left (B), perm[1] → bottom-right (C), perm[2] → top (A).
-    // tri.c (index 2) is always the unknown.
+  // ── Badge tray ────────────────────────────────────────────────────────────────
+  function hexPath() {
+    // Regular hexagon points for 40×46 viewBox
+    return '20,2 38,13 38,33 20,44 2,33 2,13';
+  }
+
+  function renderBadgeTray() {
+    badgeTray.innerHTML = '';
+    for (let i = 1; i <= MAX_LEVEL; i++) {
+      const earned = gs.badges.includes(i);
+      const def = LEVEL_DEFS[i];
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 40 46');
+      svg.setAttribute('width', '40');
+      svg.setAttribute('height', '46');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', earned ? `${def.badge.title} badge` : `Level ${i} badge — locked`);
+
+      const hex = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      hex.setAttribute('points', hexPath());
+      if (earned) {
+        hex.setAttribute('fill', def.badge.color);
+        hex.setAttribute('stroke', darkenColor(def.badge.color));
+        hex.setAttribute('stroke-width', '2');
+      } else {
+        hex.setAttribute('fill', '#e8e3d8');
+        hex.setAttribute('stroke', '#ccc');
+        hex.setAttribute('stroke-width', '1.5');
+      }
+      svg.appendChild(hex);
+
+      if (earned) {
+        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        txt.setAttribute('x', '20');
+        txt.setAttribute('y', '30');
+        txt.setAttribute('text-anchor', 'middle');
+        txt.setAttribute('font-size', '18');
+        txt.textContent = def.badge.emoji;
+        svg.appendChild(txt);
+      }
+
+      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      title.textContent = earned ? def.badge.title : `Level ${i} — locked`;
+      svg.appendChild(title);
+
+      badgeTray.appendChild(svg);
+    }
+  }
+
+  function darkenColor(hex) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    const r = Math.max(0, ((n >> 16) & 0xff) - 40);
+    const g = Math.max(0, ((n >> 8)  & 0xff) - 40);
+    const b = Math.max(0, ( n        & 0xff) - 40);
+    return `#${[r,g,b].map(v => v.toString(16).padStart(2,'0')).join('')}`;
+  }
+
+  // ── Badge award screen ────────────────────────────────────────────────────────
+  function showBadgeScreen(level) {
+    gs.status = 'badge';
+    const def = LEVEL_DEFS[level];
+    challengeArea.style.display = 'none';
+    feedbackEl.classList.remove('show');
+
+    // Build hexagon SVG
+    const awardSvg = document.getElementById('badge-award-svg');
+    awardSvg.innerHTML = '';
+    const hex = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    hex.setAttribute('points', hexPath());
+    hex.setAttribute('fill', def.badge.color);
+    hex.setAttribute('stroke', darkenColor(def.badge.color));
+    hex.setAttribute('stroke-width', '2');
+    awardSvg.appendChild(hex);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('x', '20'); txt.setAttribute('y', '30');
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('font-size', '22');
+    txt.textContent = def.badge.emoji;
+    awardSvg.appendChild(txt);
+
+    // Reset animation
+    awardSvg.style.animation = 'none';
+    void awardSvg.offsetWidth;
+    awardSvg.style.animation = '';
+
+    document.getElementById('badge-award-title').textContent = def.badge.title;
+    document.getElementById('badge-award-praise').textContent =
+      `You completed Level ${level} — ${PRAISE_LINES[level]}`;
+
+    // Share button
+    const shareBtn = document.getElementById('btn-share');
+    shareBtn.textContent = 'Share with Teacher 📧';
+    shareBtn.disabled = false;
+    shareBtn.onclick = () => {
+      window.location.href = buildShareEmail(level, def.badge);
+      shareBtn.textContent = '✓ Email opened!';
+      shareBtn.disabled = true;
+      setTimeout(() => {
+        shareBtn.textContent = 'Share with Teacher 📧';
+        shareBtn.disabled = false;
+      }, 2000);
+    };
+
+    screenBadge.style.display = '';
+  }
+
+  // ── Email builder ─────────────────────────────────────────────────────────────
+  function buildShareEmail(level, badgeDef) {
+    const subject = `I earned the "${badgeDef.title}" badge in Triangle Tower!`;
+    const body = [
+      `Hi!`,
+      ``,
+      `I just earned the "${badgeDef.title}" badge ${badgeDef.emoji} in Triangle Tower!`,
+      `I completed Level ${level}: ${LEVEL_DEFS[level].label}`,
+      ``,
+      `You can play Triangle Tower here:`,
+      `https://games.linocoria.com/games/math/triangle-tower/`,
+      ``,
+      `– A proud triangle expert 🔺`,
+    ].join('\n');
+    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  function buildWinEmail() {
+    const titles = gs.badges.map(l => LEVEL_DEFS[l].badge.title).join(', ');
+    const subject = `I completed ALL of Triangle Tower!`;
+    const body = [
+      `Hi!`,
+      ``,
+      `I just completed ALL 5 levels of Triangle Tower and earned every badge!`,
+      ``,
+      `My badges: ${titles}`,
+      ``,
+      `You can play Triangle Tower here:`,
+      `https://games.linocoria.com/games/math/triangle-tower/`,
+      ``,
+      `– A Triangle Master 🏆`,
+    ].join('\n');
+    return `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  // ── Challenge rendering ───────────────────────────────────────────────────────
+  // Draws a geometrically accurate triangle via law of sines.
+  function renderChallengeSVG(tri, hideAngleIndex) {
+    // hideAngleIndex: 0=a, 1=b, 2=c (null = show all)
+    const angles = [tri.a, tri.b, tri.c];
     const perm = shuffle([0, 1, 2]);
-    const vals = [tri.a, tri.b, tri.c];
 
-    const aB = vals[perm[0]] * Math.PI / 180;
-    const aC = vals[perm[1]] * Math.PI / 180;
-    const aA = vals[perm[2]] * Math.PI / 180;
+    const aB = angles[perm[0]] * Math.PI / 180;
+    const aC = angles[perm[1]] * Math.PI / 180;
+    const aA = angles[perm[2]] * Math.PI / 180;
 
-    // Raw coords: B at origin, C at (1, 0), A above.
-    // AB length via law of sines (base BC = 1).
     const AB = Math.sin(aC) / Math.sin(aA);
-    const rAx = AB * Math.cos(aB), rAy = -AB * Math.sin(aB); // negative = upward
-    const rBx = 0, rBy = 0, rCx = 1, rCy = 0;
+    const rAx = AB * Math.cos(aB), rAy = -AB * Math.sin(aB);
 
-    // Scale/translate to fit inside the 200×180 viewBox with padding.
     const PAD = 32;
     const availW = 200 - 2 * PAD, availH = 180 - 2 * PAD;
     const minX = Math.min(rAx, 0, 1), maxX = Math.max(rAx, 0, 1);
-    const minY = Math.min(rAy, 0),    maxY = 0; // base is always the lowest edge
-    const scale = Math.min(availW / (maxX - minX), availH / (maxY - minY || 1));
+    const minY = Math.min(rAy, 0);
+    const scale = Math.min(availW / (maxX - minX), availH / (0 - minY || 1));
     const offX  = PAD + (availW - (maxX - minX) * scale) / 2 - minX * scale;
-    const offY  = PAD + (availH - (maxY - minY) * scale) / 2 - minY * scale;
+    const offY  = PAD + (availH - (0 - minY) * scale) / 2 - minY * scale;
     const mx    = (rx, ry) => [rx * scale + offX, ry * scale + offY];
 
     const [Ax, Ay] = mx(rAx, rAy);
-    const [Bx, By] = mx(rBx, rBy);
-    const [Cx, Cy] = mx(rCx, rCy);
+    const [Bx, By] = mx(0, 0);
+    const [Cx, Cy] = mx(1, 0);
 
-    // Place each label just outside its vertex, along the ray away from the centroid.
-    const cx = (Ax + Bx + Cx) / 3, cy = (Ay + By + Cy) / 3;
-    const OUTSIDE = 18; // SVG units to push label past the vertex
+    const centX = (Ax + Bx + Cx) / 3, centY = (Ay + By + Cy) / 3;
+    const OUTSIDE = 18;
     const outside = (vx, vy) => {
-      const dx = vx - cx, dy = vy - cy;
+      const dx = vx - centX, dy = vy - centY;
       const len = Math.sqrt(dx * dx + dy * dy);
       return [vx + dx / len * OUTSIDE, vy + dy / len * OUTSIDE];
     };
-    const [lAx, lAy] = outside(Ax, Ay);
-    const [lBx, lBy] = outside(Bx, By);
-    const [lCx, lCy] = outside(Cx, Cy);
 
-    const text  = (pi) => perm[pi] === 2 ? '?' : `${vals[perm[pi]]}°`;
-    const color = (pi) => perm[pi] === 2 ? '#ff6b6b' : '#2c2c3a';
-    const sz = 'style="font-size:16px"';
+    const pts = [[Ax, Ay], [Bx, By], [Cx, Cy]];
+    const labels = perm.map((origIdx, visPos) => {
+      // hideAngleIndex === null means show all; otherwise hide the matching angle index
+      const hidden = hideAngleIndex !== null && hideAngleIndex !== undefined && origIdx === hideAngleIndex;
+      const [lx, ly] = outside(...pts[visPos]);
+      return {
+        x: lx, y: ly,
+        text: hidden ? '?' : `${angles[origIdx]}°`,
+        color: hidden ? '#ff6b6b' : '#2c2c3a',
+      };
+    });
 
     challengeSvg.innerHTML = `
       <polygon points="${Ax.toFixed(1)},${Ay.toFixed(1)} ${Bx.toFixed(1)},${By.toFixed(1)} ${Cx.toFixed(1)},${Cy.toFixed(1)}"
                fill="#fff0f0" stroke="#ff6b6b" stroke-width="3" />
-      <text x="${lAx.toFixed(1)}" y="${lAy.toFixed(1)}" text-anchor="middle"
-            font-family="'Fredoka',sans-serif" ${sz}
-            fill="${color(2)}" font-weight="700">${text(2)}</text>
-      <text x="${lBx.toFixed(1)}" y="${lBy.toFixed(1)}" text-anchor="middle"
-            font-family="'Fredoka',sans-serif" ${sz}
-            fill="${color(0)}" font-weight="700">${text(0)}</text>
-      <text x="${lCx.toFixed(1)}" y="${lCy.toFixed(1)}" text-anchor="middle"
-            font-family="'Fredoka',sans-serif" ${sz}
-            fill="${color(1)}" font-weight="700">${text(1)}</text>
+      ${labels.map(l => `
+        <text x="${l.x.toFixed(1)}" y="${l.y.toFixed(1)}" text-anchor="middle"
+              font-family="'Fredoka',sans-serif" style="font-size:16px"
+              fill="${l.color}" font-weight="700">${l.text}</text>
+      `).join('')}
     `;
 
-    // Slide-in animation
     challengeSvg.classList.remove('shake', 'slide-in');
-    void challengeSvg.offsetWidth; // reflow
+    void challengeSvg.offsetWidth;
     challengeSvg.classList.add('slide-in');
   }
 
-  // ── Feedback message ─────────────────────────────────────────────────────────
-  const correctMsgs = [
-    'Perfect! 🎉', 'You got it! ⭐', 'Amazing! Keep going! 🚀', 'Nicely done! 🔺'
-  ];
-
+  // ── Feedback ──────────────────────────────────────────────────────────────────
+  const correctMsgs = ['Perfect! 🎉', 'You got it! ⭐', 'Amazing! 🚀', 'Nicely done! 🔺'];
   let feedbackTimer = null;
 
   function showFeedback(msg, type) {
-    if (feedbackTimer) { clearTimeout(feedbackTimer); }
+    if (feedbackTimer) clearTimeout(feedbackTimer);
     feedbackEl.textContent = msg;
     feedbackEl.className = `show ${type}-msg`;
-    feedbackTimer = setTimeout(() => {
-      feedbackEl.classList.remove('show');
-    }, 1700);
+    feedbackTimer = setTimeout(() => feedbackEl.classList.remove('show'), 1700);
   }
 
-  // ── New challenge ────────────────────────────────────────────────────────────
+  // ── Step indicator ────────────────────────────────────────────────────────────
+  function updateStepIndicator(activeType, step) {
+    if (activeType === 'missing-and-type') {
+      stepIndicator.style.display = 'flex';
+      dot1.className = 'step-dot' + (step === 1 ? ' active' : '');
+      dot2.className = 'step-dot' + (step === 2 ? ' active' : '');
+    } else {
+      stepIndicator.style.display = 'none';
+    }
+  }
+
+  // ── New challenge ─────────────────────────────────────────────────────────────
   function newChallenge() {
-    const tri = generateTriangle(gs.level);
-    gs.currentTriangle = tri;
-    gs.correctAnswer = tri.c;
-    const opts = generateOptions(tri.c, gs.level);
+    if (gs.status !== 'playing') return;
 
-    renderChallengeSVG(tri);
+    const activeType = resolveType(gs.level);
+    gs.activeLevelType = activeType;
+    gs.step = 1;
+    gs.pendingAngle = null;
 
-    answerGrid.innerHTML = '';
-    opts.forEach(val => {
-      const btn = document.createElement('button');
-      btn.textContent = `${val}°`;
-      btn.setAttribute('aria-label', `Answer: ${val} degrees`);
-      btn.addEventListener('click', () => handleAnswer(val, btn, opts));
-      answerGrid.appendChild(btn);
-    });
-
+    updateStepIndicator(activeType, 1);
+    buildChallenge(activeType);
     challengeArea.style.display = '';
   }
 
-  // ── Handle answer ────────────────────────────────────────────────────────────
-  function handleAnswer(val, btn, opts) {
-    if (gs.status !== 'playing') return;
+  function buildChallenge(type) {
+    let tri;
 
-    // Disable all buttons immediately
+    if (type === 'missing-angle') {
+      tri = generateTriangleAngles();
+      gs.currentTriangle = tri;
+      gs.correctAnswer = tri.c; // hide angle c
+      renderChallengeSVG(tri, 2); // hide index 2 = tri.c
+      buildNumericButtons([tri.a, tri.b, tri.c], tri.c);
+
+    } else if (type === 'triangle-type') {
+      const triType = pickWeightedType(gs.typesSeen, ['equilateral', 'isosceles', 'scalene']);
+      tri = generateTriangleAngles(triType);
+      gs.currentTriangle = tri;
+      const actual = classifyTriType(tri);
+      gs.typesSeen[actual] = (gs.typesSeen[actual] || 0) + 1;
+      gs.correctAnswer = actual;
+      renderChallengeSVG(tri, null); // show all angles
+      buildTypeButtons(actual, false);
+
+    } else if (type === 'missing-and-type') {
+      tri = generateTriangleAngles();
+      gs.currentTriangle = tri;
+      gs.correctAnswer = tri.c;
+      gs.pendingAngle = null;
+      renderChallengeSVG(tri, 2);
+      buildNumericButtons([tri.a, tri.b, tri.c], tri.c);
+
+    } else if (type === 'acute-obtuse-right') {
+      const wantType = pickWeightedType(gs.acuteRightObtuseSeen, ['acute', 'right', 'obtuse']);
+      tri = generateTriangleAngles(wantType);
+      gs.currentTriangle = tri;
+      const classification = classifyAcuteRight(tri);
+      gs.acuteRightObtuseSeen[classification] = (gs.acuteRightObtuseSeen[classification] || 0) + 1;
+      gs.correctAnswer = classification;
+      renderChallengeSVG(tri, null); // show all angles
+      buildClassifyButtons(classification);
+    }
+  }
+
+  function buildNumericButtons(angleVals, correct) {
+    const opts = generateOptions(correct, 30);
+    renderAnswerButtons(opts.map(v => ({ label: `${v}°`, value: v })), correct,
+      (val) => handleNumericAnswer(val));
+  }
+
+  function buildTypeButtons(correct, isStep2) {
+    const labels = shuffle(['Equilateral', 'Isosceles', 'Scalene', 'Right Triangle']);
+    renderAnswerButtons(
+      labels.map(l => ({ label: l, value: l.toLowerCase().replace(' triangle', '') })),
+      correct,
+      (val) => handleTypeAnswer(val)
+    );
+  }
+
+  function buildClassifyButtons(correct) {
+    const distractors = shuffle(['Equilateral', 'Isosceles', 'Scalene']);
+    const distractor = distractors[0];
+    const main = shuffle(['Acute', 'Right', 'Obtuse', distractor]);
+    renderAnswerButtons(
+      main.map(l => ({ label: l, value: l.toLowerCase() })),
+      correct,
+      (val) => handleClassifyAnswer(val)
+    );
+  }
+
+  function renderAnswerButtons(items, correct, handler) {
+    answerGrid.innerHTML = '';
+    items.forEach(({ label, value }) => {
+      const btn = document.createElement('button');
+      btn.textContent = label;
+      btn.setAttribute('aria-label', `Answer: ${label}`);
+      btn.addEventListener('click', () => {
+        if (gs.status !== 'playing') return;
+        handler(value, btn);
+      });
+      answerGrid.appendChild(btn);
+    });
+  }
+
+  // ── Answer handlers ───────────────────────────────────────────────────────────
+  function disableButtons() {
     answerGrid.querySelectorAll('button').forEach(b => b.disabled = true);
+  }
+
+  function markCorrectBtn(matchFn) {
+    answerGrid.querySelectorAll('button').forEach(b => {
+      if (matchFn(b)) b.classList.add('correct');
+    });
+  }
+
+  function handleNumericAnswer(val, btn) {
+    disableButtons();
+    const activeType = gs.activeLevelType;
 
     if (val === gs.correctAnswer) {
       btn.classList.add('correct');
-      const multiplier = Math.min(gs.level, 3);
-      gs.score += 10 * multiplier;
+      gs.score += 10 * Math.min(gs.level, 3);
+      renderHUD();
+      showFeedback(correctMsgs[randInt(0, correctMsgs.length - 1)], 'correct');
+
+      if (activeType === 'missing-and-type') {
+        gs.pendingAngle = val;
+        // Auto-advance to step 2
+        setTimeout(() => {
+          if (gs.status !== 'playing') return;
+          gs.step = 2;
+          gs.correctAnswer = classifyTriType(gs.currentTriangle);
+          // Fill in the ? on the triangle
+          renderChallengeSVG(gs.currentTriangle, null);
+          updateStepIndicator('missing-and-type', 2);
+          buildTypeButtons(gs.correctAnswer, true);
+        }, 800);
+      } else {
+        gs.placed++;
+        renderTower(gs.placed - 1);
+        checkLevelComplete();
+      }
+    } else {
+      wrongAnswer(btn, gs.correctAnswer + '°');
+    }
+  }
+
+  function handleTypeAnswer(val, btn) {
+    disableButtons();
+    if (val === gs.correctAnswer) {
+      btn.classList.add('correct');
+      gs.score += 10 * Math.min(gs.level, 3);
+      if (gs.step === 2) gs.score += 10; // bonus for 2-step
       gs.placed++;
       renderTower(gs.placed - 1);
       renderHUD();
       showFeedback(correctMsgs[randInt(0, correctMsgs.length - 1)], 'correct');
-
-      // Win check, then level-up check
-      if (gs.placed >= TOTAL_TRIANGLES) {
-        setTimeout(triggerWin, 800);
-      } else if (gs.placed % TRIANGLES_PER_LEVEL === 0 && gs.level < MAX_LEVEL) {
-        gs.level++;
-        gs.status = 'levelup';
-        showLevelUp();
-      } else {
-        setTimeout(newChallenge, 900);
-      }
+      checkLevelComplete();
     } else {
-      btn.classList.add('wrong');
-      challengeSvg.classList.remove('shake');
-      void challengeSvg.offsetWidth;
-      challengeSvg.classList.add('shake');
-      gs.lives--;
-      renderHUD();
-
-      const wrongMsgs = [
-        `Not quite — the answer was ${gs.correctAnswer}°. Try the next one!`,
-        `Almost! It was ${gs.correctAnswer}°. You've got this!`,
-        `Good try! ${gs.correctAnswer}° was the missing angle.`,
-      ];
-      showFeedback(wrongMsgs[randInt(0, wrongMsgs.length - 1)], 'wrong');
-
-      // Briefly reveal correct answer
-      answerGrid.querySelectorAll('button').forEach(b => {
-        if (parseInt(b.textContent) === gs.correctAnswer) b.classList.add('correct');
-      });
-
-      if (gs.lives <= 0) {
-        setTimeout(triggerGameOver, 1400);
-      } else {
-        setTimeout(newChallenge, 1400);
-      }
+      const dispCorrect = gs.correctAnswer.charAt(0).toUpperCase() + gs.correctAnswer.slice(1);
+      wrongAnswer(btn, dispCorrect);
     }
   }
 
-  // ── Win ──────────────────────────────────────────────────────────────────────
-  function flashTowerGold() {
-    // Cascade gold fill across all placed triangles, left-to-right bottom-to-top
+  function handleClassifyAnswer(val, btn) {
+    disableButtons();
+    if (val === gs.correctAnswer) {
+      btn.classList.add('correct');
+      gs.score += 10 * Math.min(gs.level, 3);
+      gs.placed++;
+      renderTower(gs.placed - 1);
+      renderHUD();
+      showFeedback(correctMsgs[randInt(0, correctMsgs.length - 1)], 'correct');
+      checkLevelComplete();
+    } else {
+      const dispCorrect = gs.correctAnswer.charAt(0).toUpperCase() + gs.correctAnswer.slice(1);
+      wrongAnswer(btn, dispCorrect);
+    }
+  }
+
+  function wrongAnswer(btn, correctDisplay) {
+    btn.classList.add('wrong');
+    challengeSvg.classList.remove('shake');
+    void challengeSvg.offsetWidth;
+    challengeSvg.classList.add('shake');
+    gs.lives--;
+    renderHUD();
+
+    const wrongMsgs = [
+      `Not quite — it was ${correctDisplay}. Try the next one!`,
+      `Almost! It was ${correctDisplay}. You've got this!`,
+      `Good try! ${correctDisplay} was the answer.`,
+    ];
+    showFeedback(wrongMsgs[randInt(0, wrongMsgs.length - 1)], 'wrong');
+
+    markCorrectBtn(b => {
+      const t = b.textContent.replace('°', '').toLowerCase();
+      return t === String(correctDisplay).replace('°', '').toLowerCase();
+    });
+
+    // Reset both steps for missing-and-type
+    gs.step = 1;
+    gs.pendingAngle = null;
+
+    if (gs.lives <= 0) {
+      setTimeout(triggerGameOver, 1400);
+    } else {
+      setTimeout(newChallenge, 1400);
+    }
+  }
+
+  // ── Level completion ──────────────────────────────────────────────────────────
+  function checkLevelComplete() {
+    if (gs.placed >= TRIANGLES_PER_LEVEL) {
+      // Tower complete — flash gold then show badge
+      flashTowerGold(() => {
+        gs.badges.push(gs.level);
+        renderBadgeTray();
+        showBadgeScreen(gs.level);
+      });
+    } else {
+      setTimeout(newChallenge, 900);
+    }
+  }
+
+  function flashTowerGold(callback) {
     const polys = [...towerGroup.querySelectorAll('polygon')];
     polys.forEach((p, i) => {
       setTimeout(() => {
@@ -752,51 +1299,86 @@
         p.setAttribute('stroke', '#e8a800');
       }, i * 35);
     });
+    setTimeout(callback, polys.length * 35 + 400);
   }
 
+  // ── Continue after badge ──────────────────────────────────────────────────────
+  function continueAfterBadge() {
+    screenBadge.style.display = 'none';
+    const justFinished = gs.level;
+
+    if (justFinished >= MAX_LEVEL) {
+      triggerWin();
+      return;
+    }
+
+    gs.level++;
+    gs.placed = 0;
+    gs.status = 'playing';
+    renderTower();
+    renderHUD();
+    showLevelIntro(gs.level);
+  }
+
+  // ── Win ───────────────────────────────────────────────────────────────────────
   function triggerWin() {
     gs.status = 'win';
     challengeArea.style.display = 'none';
     feedbackEl.classList.remove('show');
-    flashTowerGold();
-    setTimeout(() => {
-      document.getElementById('win-score').textContent = `Final Score: ${gs.score}`;
-      document.getElementById('screen-win').style.display = '';
-    }, TOTAL_TRIANGLES * 35 + 400); // wait for gold sweep to finish
+
+    const shareWinBtn = document.getElementById('btn-share-win');
+    shareWinBtn.textContent = 'Share Your Achievement 📧';
+    shareWinBtn.disabled = false;
+    shareWinBtn.onclick = () => {
+      window.location.href = buildWinEmail();
+      shareWinBtn.textContent = '✓ Email opened!';
+      shareWinBtn.disabled = true;
+      setTimeout(() => {
+        shareWinBtn.textContent = 'Share Your Achievement 📧';
+        shareWinBtn.disabled = false;
+      }, 2000);
+    };
+
+    document.getElementById('win-score').textContent = `Final Score: ${gs.score}`;
+    document.getElementById('screen-win').style.display = '';
   }
 
-  // ── Level up ─────────────────────────────────────────────────────────────────
-  function showLevelUp() {
-    levelupBanner.textContent = `Level ${gs.level}! 🎉`;
-    levelupBanner.classList.add('show');
-    setTimeout(() => {
-      levelupBanner.classList.remove('show');
-      gs.status = 'playing';
-      newChallenge();
-    }, 2000);
+  // ── Level intro ───────────────────────────────────────────────────────────────
+  function showLevelIntro(level) {
+    gs.status = 'idle';
+    const def = LEVEL_DEFS[level];
+    document.getElementById('intro-level-num').textContent = `Level ${level}`;
+    document.getElementById('intro-label').textContent = def.label;
+    document.getElementById('intro-desc').textContent = def.description;
+    screenIntro.style.display = '';
   }
 
-  // ── Game over ────────────────────────────────────────────────────────────────
+  // ── Game over ─────────────────────────────────────────────────────────────────
   function triggerGameOver() {
     gs.status = 'gameover';
     challengeArea.style.display = 'none';
-    document.getElementById('go-score').textContent = `Final Score: ${gs.score}`;
-    const rowsReached = gs.placed > 0
-      ? Math.floor((gs.placed - 1) / COLS_BASE) + 1  // approx row count
-      : 0;
-    document.getElementById('go-rows').textContent = `Triangles placed: ${gs.placed}`;
+    document.getElementById('go-score').textContent   = `Final Score: ${gs.score}`;
+    document.getElementById('go-level').textContent   = `Highest level reached: ${gs.level}`;
+    document.getElementById('go-badges').textContent  = `You earned ${gs.badges.length} out of 5 badges`;
     screenGameover.style.display = '';
   }
 
-  // ── Start / restart ──────────────────────────────────────────────────────────
+  // ── Start / restart ───────────────────────────────────────────────────────────
   function startGame() {
     gs = freshState();
     gs.status = 'playing';
-    screenIdle.style.display     = 'none';
-    screenGameover.style.display = 'none';
+    screenBadge.style.display     = 'none';
+    screenGameover.style.display  = 'none';
     document.getElementById('screen-win').style.display = 'none';
     renderTower();
     renderHUD();
+    renderBadgeTray();
+    showLevelIntro(1);
+  }
+
+  function beginPlaying() {
+    screenIntro.style.display = 'none';
+    gs.status = 'playing';
     newChallenge();
   }
 
@@ -805,10 +1387,15 @@
     gs = freshState();
     renderTower();
     renderHUD();
+    renderBadgeTray();
 
-    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-letsgo').addEventListener('click', beginPlaying);
+    document.getElementById('btn-continue').addEventListener('click', continueAfterBadge);
     document.getElementById('btn-again').addEventListener('click', startGame);
     document.getElementById('btn-win-again').addEventListener('click', startGame);
+
+    // Show level 1 intro on load
+    showLevelIntro(1);
   }
 
   document.addEventListener('DOMContentLoaded', init);
