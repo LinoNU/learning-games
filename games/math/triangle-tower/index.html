@@ -1132,7 +1132,7 @@
   function buildNumericButtons(angleVals, correct) {
     const opts = generateOptions(correct, 30);
     renderAnswerButtons(opts.map(v => ({ label: `${v}°`, value: v })), correct,
-      (val) => handleNumericAnswer(val));
+      handleNumericAnswer);
   }
 
   function buildTypeButtons(correct, isStep2) {
@@ -1143,7 +1143,7 @@
     renderAnswerButtons(
       labels.map(l => ({ label: l, value: l.toLowerCase().replace(' a triangle', '').replace(' triangle', '') })),
       correct,
-      (val) => handleTypeAnswer(val)
+      handleTypeAnswer
     );
   }
 
@@ -1154,7 +1154,7 @@
     renderAnswerButtons(
       main.map(l => ({ label: l, value: l.toLowerCase() })),
       correct,
-      (val) => handleClassifyAnswer(val)
+      handleClassifyAnswer
     );
   }
 
