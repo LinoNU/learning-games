@@ -1119,11 +1119,13 @@
   }
 
   function buildClassifyButtons(correct) {
-    const distractors = shuffle(['Equilateral', 'Isosceles', 'Scalene']);
-    const distractor = distractors[0];
-    const main = shuffle(['Acute', 'Right', 'Obtuse', distractor]);
+    // Random shape-classification distractors (Equilateral, Isosceles, Scalene) were removed:
+    // a 45-45-90 triangle is simultaneously right AND isosceles, which would create two
+    // defensible correct answers. "Not a Triangle" is never correct for any validly
+    // generated triangle, so it serves as an unambiguous fourth option.
+    const options = shuffle(['Acute', 'Right', 'Obtuse', 'Not a Triangle']);
     renderAnswerButtons(
-      main.map(l => ({ label: l, value: l.toLowerCase() })),
+      options.map(l => ({ label: l, value: l.toLowerCase().replace(' a triangle', '') })),
       correct,
       handleClassifyAnswer
     );
